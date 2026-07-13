@@ -1,0 +1,7 @@
+spring:
+  datasource:
+    url: jdbc:postgresql://postgres:5432/${DB_NAME:careeros}
+
+logging:
+  level:
+    com.careeros: INFO

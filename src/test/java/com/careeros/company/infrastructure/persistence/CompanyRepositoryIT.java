@@ -27,7 +27,7 @@ class CompanyRepositoryIT extends AbstractPostgresIntegrationTest {
     private SpringDataCompanyRepository companyRepository;
 
     private static Company aCompany(String name) {
-        return Company.create(name, "https://acme.example/careers", AtsType.GREENHOUSE, Priority.HIGH, true);
+        return Company.create(name, "https://acme.example/careers", AtsType.GREENHOUSE, Priority.HIGH, true, "acme");
     }
 
     @Test
@@ -64,5 +64,16 @@ class CompanyRepositoryIT extends AbstractPostgresIntegrationTest {
         assertThat(result.getContent())
                 .extracting(Company::getName)
                 .containsExactly("Enabled Greenhouse Co");
+    }
+
+    @Test
+    void savesAndReloadsCompanyWithNullAtsIdentifier() {
+        Company company = Company.create(
+                "No ATS Co", "https://acme.example/careers", AtsType.OTHER, Priority.LOW, true, null);
+        Company saved = companyRepository.save(company);
+
+        Company reloaded = companyRepository.findById(saved.getId()).orElseThrow();
+        assertThat(reloaded.getAtsType()).isEqualTo(AtsType.OTHER);
+        assertThat(reloaded.getAtsIdentifier()).isNull();
     }
 }

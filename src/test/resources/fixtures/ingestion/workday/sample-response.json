@@ -1,0 +1,19 @@
+{
+  "total": 2,
+  "jobPostings": [
+    {
+      "title": "Senior Financial Analyst",
+      "externalPath": "/en-US/External/job/Remote/Senior-Financial-Analyst_REQ-1234",
+      "locationsText": "Remote - USA",
+      "postedOn": "Posted Today",
+      "bulletFields": ["REQ-1234"]
+    },
+    {
+      "title": "Warehouse Associate",
+      "externalPath": "/en-US/External/job/Dallas-TX/Warehouse-Associate_REQ-5678",
+      "locationsText": "Dallas, TX",
+      "postedOn": "Posted 3 Days Ago",
+      "bulletFields": []
+    }
+  ]
+}

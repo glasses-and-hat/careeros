@@ -13,6 +13,7 @@ public record CompanyResponse(
         AtsType atsType,
         Priority priority,
         boolean enabled,
+        String atsIdentifier,
         Instant createdAt,
         Instant updatedAt
 ) {

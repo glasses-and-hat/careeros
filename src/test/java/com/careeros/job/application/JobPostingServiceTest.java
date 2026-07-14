@@ -41,7 +41,7 @@ class JobPostingServiceTest {
     @BeforeEach
     void setUp() {
         jobPostingService = new JobPostingService(jobPostingRepository, companyRepository);
-        company = Company.create("Acme Inc", "https://acme.example/careers", AtsType.GREENHOUSE, Priority.HIGH, true);
+        company = Company.create("Acme Inc", "https://acme.example/careers", AtsType.GREENHOUSE, Priority.HIGH, true, "acme");
     }
 
     private static JobPostingCommand aCommand(UUID companyId) {

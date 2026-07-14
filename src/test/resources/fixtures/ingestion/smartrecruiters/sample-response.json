@@ -1,0 +1,23 @@
+{
+  "totalFound": 2,
+  "offset": 0,
+  "limit": 100,
+  "content": [
+    {
+      "id": "posting-1",
+      "name": "Data Scientist",
+      "releasedDate": "2024-04-01T00:00:00.000Z",
+      "location": { "city": "Berlin", "region": null, "country": "Germany", "remote": true },
+      "typeOfEmployment": { "label": "Full-time" },
+      "ref": "https://jobs.smartrecruiters.com/AcmeInc/posting-1"
+    },
+    {
+      "id": "posting-2",
+      "name": "Sales Associate",
+      "releasedDate": "2024-04-05T00:00:00.000Z",
+      "location": { "city": "Chicago", "region": "IL", "country": "USA", "remote": false },
+      "typeOfEmployment": { "label": "Part-time" },
+      "ref": null
+    }
+  ]
+}

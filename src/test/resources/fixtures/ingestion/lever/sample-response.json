@@ -1,0 +1,22 @@
+[
+  {
+    "id": "abc-123",
+    "text": "Staff Software Engineer",
+    "categories": { "location": "New York, NY", "commitment": "Full-time" },
+    "workplaceType": "remote",
+    "createdAt": 1704067200000,
+    "hostedUrl": "https://jobs.lever.co/acme/abc-123",
+    "applyUrl": "https://jobs.lever.co/acme/abc-123/apply",
+    "descriptionPlain": "Build things."
+  },
+  {
+    "id": "def-456",
+    "text": "Contract Recruiter",
+    "categories": { "location": "Austin, TX", "commitment": "Contract" },
+    "workplaceType": "onsite",
+    "createdAt": 1706745600000,
+    "hostedUrl": "https://jobs.lever.co/acme/def-456",
+    "applyUrl": null,
+    "descriptionPlain": "Find people."
+  }
+]

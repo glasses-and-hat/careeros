@@ -42,7 +42,7 @@ class CompanyServiceTest {
     }
 
     private static CompanyCommand aCommand() {
-        return new CompanyCommand("Acme Inc", "https://acme.example/careers", AtsType.GREENHOUSE, Priority.HIGH, true);
+        return new CompanyCommand("Acme Inc", "https://acme.example/careers", AtsType.GREENHOUSE, Priority.HIGH, true, "acme");
     }
 
     @Test
@@ -55,6 +55,7 @@ class CompanyServiceTest {
 
         assertThat(result.getName()).isEqualTo("Acme Inc");
         assertThat(result.getAtsType()).isEqualTo(AtsType.GREENHOUSE);
+        assertThat(result.getAtsIdentifier()).isEqualTo("acme");
         verify(companyRepository).save(any(Company.class));
     }
 
@@ -82,16 +83,17 @@ class CompanyServiceTest {
     @Test
     void updatesExistingCompany() {
         UUID id = UUID.randomUUID();
-        Company existing = Company.create("Old Name", "https://old.example", AtsType.LEVER, Priority.LOW, false);
+        Company existing = Company.create("Old Name", "https://old.example", AtsType.LEVER, Priority.LOW, false, "old-slug");
         when(companyRepository.findById(id)).thenReturn(Optional.of(existing));
         when(companyRepository.save(any(Company.class))).thenAnswer(invocation -> invocation.getArgument(0));
 
-        CompanyCommand update = new CompanyCommand("New Name", "https://new.example", AtsType.ASHBY, Priority.HIGH, true);
+        CompanyCommand update = new CompanyCommand("New Name", "https://new.example", AtsType.ASHBY, Priority.HIGH, true, "new-board");
         Company result = companyService.update(id, update);
 
         assertThat(result.getName()).isEqualTo("New Name");
         assertThat(result.getAtsType()).isEqualTo(AtsType.ASHBY);
         assertThat(result.isEnabled()).isTrue();
+        assertThat(result.getAtsIdentifier()).isEqualTo("new-board");
     }
 
     @Test

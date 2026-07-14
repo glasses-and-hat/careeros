@@ -40,7 +40,7 @@ class CompanyControllerTest {
     private CompanyService companyService;
 
     private static Company aCompany() {
-        return Company.create("Acme Inc", "https://acme.example/careers", AtsType.GREENHOUSE, Priority.HIGH, true);
+        return Company.create("Acme Inc", "https://acme.example/careers", AtsType.GREENHOUSE, Priority.HIGH, true, "acme");
     }
 
     @Test
@@ -49,19 +49,20 @@ class CompanyControllerTest {
         when(companyService.create(any())).thenReturn(company);
 
         CompanyRequest request = new CompanyRequest(
-                "Acme Inc", "https://acme.example/careers", AtsType.GREENHOUSE, Priority.HIGH, true);
+                "Acme Inc", "https://acme.example/careers", AtsType.GREENHOUSE, Priority.HIGH, true, "acme");
 
         mockMvc.perform(post("/api/v1/companies")
                         .contentType("application/json")
                         .content(objectMapper.writeValueAsString(request)))
                 .andExpect(status().isCreated())
                 .andExpect(jsonPath("$.name").value("Acme Inc"))
-                .andExpect(jsonPath("$.atsType").value("GREENHOUSE"));
+                .andExpect(jsonPath("$.atsType").value("GREENHOUSE"))
+                .andExpect(jsonPath("$.atsIdentifier").value("acme"));
     }
 
     @Test
     void createReturns400WhenNameBlank() throws Exception {
-        CompanyRequest request = new CompanyRequest("", "https://acme.example", AtsType.GREENHOUSE, Priority.HIGH, true);
+        CompanyRequest request = new CompanyRequest("", "https://acme.example", AtsType.GREENHOUSE, Priority.HIGH, true, "acme");
 
         mockMvc.perform(post("/api/v1/companies")
                         .contentType("application/json")
@@ -75,7 +76,7 @@ class CompanyControllerTest {
         when(companyService.create(any())).thenThrow(new DuplicateResourceException("A company named 'Acme Inc' already exists"));
 
         CompanyRequest request = new CompanyRequest(
-                "Acme Inc", "https://acme.example/careers", AtsType.GREENHOUSE, Priority.HIGH, true);
+                "Acme Inc", "https://acme.example/careers", AtsType.GREENHOUSE, Priority.HIGH, true, "acme");
 
         mockMvc.perform(post("/api/v1/companies")
                         .contentType("application/json")

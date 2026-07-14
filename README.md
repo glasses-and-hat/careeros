@@ -8,10 +8,11 @@ optimize resumes and manage the application pipeline.
 
 This repository currently implements **Milestone 1: the foundation** —
 domain model, persistence, and CRUD APIs for companies, job postings, and
-user preferences. Nothing beyond that (ATS connectors, scoring, AI resume
-optimization, recruiter CRM, notifications) is implemented yet; see
-[`docs/architecture.md`](docs/architecture.md) for how the architecture is
-designed to accommodate them without rework.
+user preferences — and **Milestone 2: ATS connectors**, which ingest job
+postings from Greenhouse, Lever, Ashby, Workday, and SmartRecruiters. Scoring,
+AI resume optimization, recruiter CRM, and notifications are not implemented
+yet; see [`docs/architecture.md`](docs/architecture.md) for how the
+architecture is designed to accommodate them without rework.
 
 ## Tech stack
 
@@ -21,6 +22,7 @@ designed to accommodate them without rework.
 | Framework | Spring Boot 3.3 (Web, Data JPA, Validation, Actuator) |
 | Database | PostgreSQL 16 |
 | Schema migrations | Flyway (no Hibernate `ddl-auto`) |
+| HTTP client (outbound, ATS ingestion) | Spring `RestClient` (ships with `spring-boot-starter-web`, no new dependency) |
 | API docs | springdoc-openapi / Swagger UI |
 | Build | Maven (wrapper included, no local install required) |
 | Containerization | Docker, Docker Compose |
@@ -105,6 +107,7 @@ Swagger UI at `/swagger-ui.html` once the app is running.
 | Companies | `POST /companies`, `GET /companies`, `GET /companies/{id}`, `PUT /companies/{id}`, `DELETE /companies/{id}` |
 | Jobs | `POST /jobs`, `GET /jobs`, `GET /jobs/{id}`, `PUT /jobs/{id}`, `DELETE /jobs/{id}` |
 | Preferences | `POST /preferences`, `GET /preferences`, `GET /preferences/{id}`, `PUT /preferences/{id}`, `DELETE /preferences/{id}` |
+| Ingestion | `POST /ingestion/runs` (all enabled companies), `POST /ingestion/companies/{id}/runs` (one company) |
 
 Company filters: `name`, `atsType`, `priority`, `enabled`.
 Job filters: `companyId`, `title`, `location`, `employmentType`, `remote`, `postedAfter`.
@@ -127,6 +130,32 @@ curl -X POST http://localhost:8080/api/v1/companies \
       }'
 ```
 
+## ATS connectors and ingestion
+
+Each `Company` has an `atsType` and an `atsIdentifier` — the connector-specific
+key needed to call that ATS's public job-board API. All five APIs are
+public/unauthenticated; no credentials to configure.
+
+| ATS | `atsIdentifier` format | Example |
+|---|---|---|
+| Greenhouse | board token | `acme` |
+| Lever | site slug | `acme` |
+| Ashby | job-board name | `acme` |
+| SmartRecruiters | company identifier | `AcmeInc` |
+| Workday | `tenant/site` | `acme/External` |
+
+Ingestion can be triggered two ways:
+- **Manually**: `POST /api/v1/ingestion/runs` (all enabled companies) or
+  `POST /api/v1/ingestion/companies/{id}/runs` (one company, regardless of
+  its `enabled` flag). Both return a summary of created/skipped/failed
+  postings per company — duplicates (already-ingested postings) are counted
+  as skipped, not failures, and one company's fetch failure never stops the
+  others from being processed.
+- **On a schedule**: an optional `@Scheduled` poller, off by default. Enable
+  it with `careeros.ingestion.enabled=true`; interval and HTTP timeouts are
+  configurable via `careeros.ingestion.poll-interval` /
+  `connect-timeout` / `read-timeout` (see `application.yml`).
+
 ## Database migrations
 
 Schema is owned entirely by Flyway (`src/main/resources/db/migration`);
@@ -138,11 +167,12 @@ Hibernate `ddl-auto` is `none`. Add new migrations as
 | `V1` | `companies` table |
 | `V2` | `job_postings` table (FK to companies, unique hash for duplicate detection) |
 | `V3` | `user_preferences` + its `roles`/`technologies`/`locations` collection tables |
+| `V4` | Adds nullable `ats_identifier` column to `companies` |
 
 ## Project status / roadmap
 
 - [x] Milestone 1 — foundation: domain model, persistence, CRUD APIs, OpenAPI, tests, Docker
-- [ ] ATS connectors (Greenhouse, Lever, Ashby, Workday, SmartRecruiters)
+- [x] Milestone 2 — ATS connectors (Greenhouse, Lever, Ashby, Workday, SmartRecruiters)
 - [ ] Duplicate detection (fuzzy/semantic, beyond the exact-hash check already in place)
 - [ ] Job matching / scoring against user preferences
 - [ ] AI-assisted resume optimization (OpenAI, pgvector semantic matching)

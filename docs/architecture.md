@@ -1,4 +1,4 @@
-# CareerOS — Architecture (Milestone 1)
+# CareerOS — Architecture (Milestones 1–2)
 
 CareerOS is built as a **modular monolith** using **Hexagonal Architecture
 (Ports & Adapters)**. Each business capability (company, job, preference) is
@@ -109,6 +109,33 @@ com.careeros
     └── web/
 ```
 
+The `job` module additionally hosts ATS ingestion (Milestone 2):
+
+```
+job/
+├── application/
+│   ├── JobPostingCommand.java, JobPostingService.java
+│   └── ingestion/           # AtsConnector (port), JobIngestionService (orchestrator),
+│                             # IngestionSummary, CompanyIngestionResult
+├── infrastructure/
+│   ├── persistence/          # unchanged
+│   ├── ingestion/
+│   │   ├── IngestionRestClientConfig.java   # RestClient.Builder bean
+│   │   ├── support/          # AtsDateParser, EmploymentTypeParser, RemoteHeuristic
+│   │   └── <ats>/            # greenhouse, lever, ashby, smartrecruiters, workday —
+│   │                          # one package-private AtsConnector @Component + DTOs each
+│   └── scheduling/
+│       └── IngestionScheduler.java   # @Scheduled poller, gated by careeros.ingestion.enabled
+└── web/
+    ├── JobPostingController.java     # unchanged
+    └── IngestionController.java      # manual trigger endpoints
+```
+
+The `AtsConnector` port lives in `job.application.ingestion`, not
+`job.domain`, because it returns `JobPostingCommand` — an application-layer
+type. `domain` must never import `application`, so a port depending on that
+type can't live in `domain`.
+
 Within each module, only `domain` types are public across module
 boundaries. `infrastructure.persistence` classes (the Spring Data
 repository interface and its adapter) are package-private — nothing outside
@@ -192,6 +219,57 @@ sequenceDiagram
     Controller-->>Client: 200 OK
 ```
 
+## Request flow: triggering ATS ingestion
+
+```mermaid
+sequenceDiagram
+    actor Client
+    participant Controller as IngestionController
+    participant Orchestrator as JobIngestionService
+    participant CompanyPort as CompanyRepository (port)
+    participant Connector as AtsConnector (per atsType)
+    participant ExternalApi as External ATS API
+    participant JobService as JobPostingService
+    participant DB as PostgreSQL
+
+    Client->>Controller: POST /api/v1/ingestion/runs
+    Controller->>Orchestrator: ingestAllEnabledCompanies()
+    Orchestrator->>CompanyPort: findAllEnabled()
+    CompanyPort->>DB: SELECT ... FROM companies WHERE enabled
+    DB-->>CompanyPort: List<Company>
+    CompanyPort-->>Orchestrator: List<Company>
+
+    loop each company
+        Orchestrator->>Connector: fetchJobs(company)
+        alt fetch fails (network error, malformed response)
+            Connector-->>Orchestrator: throws
+            Orchestrator->>Orchestrator: record "fetch failed" for this company, continue loop
+        else fetch succeeds
+            Connector->>ExternalApi: GET/POST job board API
+            ExternalApi-->>Connector: postings JSON
+            Connector-->>Orchestrator: List<JobPostingCommand>
+            loop each posting
+                Orchestrator->>JobService: create(command)
+                alt duplicate hash
+                    JobService-->>Orchestrator: throws DuplicateResourceException
+                    Orchestrator->>Orchestrator: count as skipped, continue
+                else new posting
+                    JobService->>DB: INSERT INTO job_postings
+                    JobService-->>Orchestrator: JobPosting
+                    Orchestrator->>Orchestrator: count as created
+                end
+            end
+        end
+    end
+
+    Orchestrator-->>Controller: IngestionSummary (created/skipped/failed per company)
+    Controller-->>Client: 200 OK
+```
+
+One company's fetch failure never aborts the run for the others, and a
+duplicate posting is an expected, counted outcome (not an error) — every
+poll cycle re-fetches postings that were already ingested on a prior run.
+
 ## Cross-cutting concerns
 
 - **Validation**: Jakarta Bean Validation on request DTOs (`@NotBlank`,
@@ -211,6 +289,12 @@ sequenceDiagram
 - **Auditing**: `createdAt`/`updatedAt` are managed by Spring Data JPA
   auditing (`AuditableEntity`), never set manually — one less thing for
   every service method to get wrong.
+- **Outbound HTTP (ATS ingestion)**: each connector uses Spring `RestClient`
+  with connect/read timeouts from `IngestionProperties`
+  (`careeros.ingestion.connect-timeout` / `read-timeout`). The `@Scheduled`
+  poller is gated by `careeros.ingestion.enabled` (default `false`, via
+  `@ConditionalOnProperty` so the trigger doesn't exist at all when
+  disabled) — ingestion never fires unexpectedly in dev/test/CI.
 
 ## Known Hibernate 6 pitfalls this codebase already worked around
 
@@ -237,19 +321,33 @@ Worth documenting since they're easy to reintroduce:
    deep in `HibernateJpaDialect`, e.g. a `String` currency landing in a
    `BigDecimal` slot). `SalaryRange` is a plain class with an explicit
    constructor to sidestep that ordering assumption rather than rely on it.
+4. **A batch orchestrator must not share a transaction with the per-item
+   service it calls.** `JobPostingService.create()` is `@Transactional`
+   (class-level, `REQUIRED` propagation). If `JobIngestionService` (which
+   loops over postings calling `create()` and catches
+   `DuplicateResourceException` per item) were itself `@Transactional`,
+   every `create()` call in a run would join the *same* physical
+   transaction — and Spring's AOP interceptor marks that transaction
+   rollback-only on any unchecked exception raised by a participating
+   method, even one caught immediately by the caller. The first duplicate
+   anywhere in a run would silently poison the whole batch, surfacing only
+   as `UnexpectedRollbackException` at commit time. `JobIngestionService` is
+   deliberately **not** `@Transactional`, so each `create()` call is its own
+   independent top-level transaction.
 
 ## Extension points for future milestones
 
 | Future capability | Where it plugs in |
 |---|---|
-| Greenhouse / Lever / Ashby / Workday / SmartRecruiters connectors | New inbound adapters that call `JobPostingService.create(...)` / `CompanyService`, one per ATS, likely under `job/infrastructure/ingestion/<ats>/`. `Company.atsType` already selects which connector owns a company. |
 | Duplicate detection (fuzzy) | A new domain service consuming `JobPostingRepository`, layered on top of the existing hash check. |
 | Job matching / scoring | A new `matching` module reading `UserPreference` + `JobPosting` through their existing ports; no changes needed to either aggregate. |
 | AI resume optimization | A new module behind a `ResumeOptimizer` port, with an OpenAI-backed adapter — same pattern as persistence ports. |
 | Recruiter CRM | A new bounded context (`recruiter/`) following the same domain/application/infrastructure/web shape. |
 | Notifications, analytics | New outbound ports invoked from the application layer of the modules that produce the events (e.g. `JobPostingService.create` publishing a domain event once an event bus exists). |
 
-None of this is implemented yet — milestone 1 is deliberately just the
-foundation (companies, jobs, preferences, CRUD, persistence, docs). The
-point of the layering above is that none of it requires touching the
-`domain` or `application` code that already exists.
+None of this is implemented yet beyond milestones 1 and 2. The point of the
+layering above is that none of it requires touching the `domain` or
+`application` code that already exists — the ATS connectors added in
+milestone 2 are the proof: they're new adapters and one new application
+service, with zero changes to `Company`'s or `JobPosting`'s core domain
+logic (`atsIdentifier` was an additive field, not a behavior change).

@@ -38,7 +38,7 @@ class JobPostingControllerTest {
     private JobPostingService jobPostingService;
 
     private static JobPosting aJobPosting() {
-        Company company = Company.create("Acme Inc", "https://acme.example/careers", AtsType.GREENHOUSE, Priority.HIGH, true);
+        Company company = Company.create("Acme Inc", "https://acme.example/careers", AtsType.GREENHOUSE, Priority.HIGH, true, "acme");
         return JobPosting.create("job-123", company, "Senior Backend Engineer", "Remote",
                 EmploymentType.FULL_TIME, true, SalaryRange.undisclosed(), "Great job", LocalDate.now(),
                 "https://acme.example/apply/job-123");

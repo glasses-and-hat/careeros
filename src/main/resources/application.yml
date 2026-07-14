@@ -75,3 +75,8 @@ careeros:
   info:
     name: CareerOS
     description: AI-powered job discovery and career management platform
+  ingestion:
+    enabled: false
+    poll-interval: 30m
+    connect-timeout: 5s
+    read-timeout: 10s

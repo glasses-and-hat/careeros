@@ -43,27 +43,34 @@ public class Company extends AuditableEntity {
     @Column(name = "enabled", nullable = false)
     private boolean enabled;
 
+    @Column(name = "ats_identifier")
+    private String atsIdentifier;
+
     protected Company() {
         // required by JPA
     }
 
-    private Company(String name, String careerUrl, AtsType atsType, Priority priority, boolean enabled) {
+    private Company(String name, String careerUrl, AtsType atsType, Priority priority, boolean enabled,
+                     String atsIdentifier) {
         this.name = requireNonBlank(name, "name");
         this.careerUrl = requireNonBlank(careerUrl, "careerUrl");
         this.atsType = Objects.requireNonNull(atsType, "atsType must not be null");
         this.priority = Objects.requireNonNull(priority, "priority must not be null");
         this.enabled = enabled;
+        this.atsIdentifier = requireAtsIdentifierIfNeeded(atsType, atsIdentifier);
     }
 
-    public static Company create(String name, String careerUrl, AtsType atsType, Priority priority, boolean enabled) {
-        return new Company(name, careerUrl, atsType, priority, enabled);
+    public static Company create(String name, String careerUrl, AtsType atsType, Priority priority, boolean enabled,
+                                  String atsIdentifier) {
+        return new Company(name, careerUrl, atsType, priority, enabled, atsIdentifier);
     }
 
-    public void updateDetails(String name, String careerUrl, AtsType atsType, Priority priority) {
+    public void updateDetails(String name, String careerUrl, AtsType atsType, Priority priority, String atsIdentifier) {
         this.name = requireNonBlank(name, "name");
         this.careerUrl = requireNonBlank(careerUrl, "careerUrl");
         this.atsType = Objects.requireNonNull(atsType, "atsType must not be null");
         this.priority = Objects.requireNonNull(priority, "priority must not be null");
+        this.atsIdentifier = requireAtsIdentifierIfNeeded(atsType, atsIdentifier);
     }
 
     public void enable() {
@@ -79,6 +86,18 @@ public class Company extends AuditableEntity {
             throw new IllegalArgumentException(field + " must not be blank");
         }
         return value;
+    }
+
+    /**
+     * Every ATS type except {@code OTHER} needs a connector-specific
+     * identifier (board token, site slug, tenant/site, ...) to be ingestible;
+     * enforced here so it holds for any caller, not just the web layer.
+     */
+    private static String requireAtsIdentifierIfNeeded(AtsType atsType, String atsIdentifier) {
+        if (atsType != AtsType.OTHER && (atsIdentifier == null || atsIdentifier.isBlank())) {
+            throw new IllegalArgumentException("atsIdentifier must not be blank for atsType " + atsType);
+        }
+        return atsIdentifier;
     }
 
     public UUID getId() {
@@ -103,6 +122,10 @@ public class Company extends AuditableEntity {
 
     public boolean isEnabled() {
         return enabled;
+    }
+
+    public String getAtsIdentifier() {
+        return atsIdentifier;
     }
 
     @Override

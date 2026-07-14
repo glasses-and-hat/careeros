@@ -11,6 +11,7 @@ public record CompanyRequest(
         @NotBlank @Size(max = 2048) String careerUrl,
         @NotNull AtsType atsType,
         @NotNull Priority priority,
-        boolean enabled
+        boolean enabled,
+        @Size(max = 255) String atsIdentifier
 ) {
 }

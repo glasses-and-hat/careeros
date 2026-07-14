@@ -13,6 +13,7 @@ public record CompanyCommand(
         String careerUrl,
         AtsType atsType,
         Priority priority,
-        boolean enabled
+        boolean enabled,
+        String atsIdentifier
 ) {
 }

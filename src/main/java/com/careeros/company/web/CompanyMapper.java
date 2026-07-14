@@ -16,6 +16,7 @@ final class CompanyMapper {
                 company.getAtsType(),
                 company.getPriority(),
                 company.isEnabled(),
+                company.getAtsIdentifier(),
                 company.getCreatedAt(),
                 company.getUpdatedAt());
     }
@@ -26,6 +27,7 @@ final class CompanyMapper {
                 request.careerUrl(),
                 request.atsType(),
                 request.priority(),
-                request.enabled());
+                request.enabled(),
+                request.atsIdentifier());
     }
 }

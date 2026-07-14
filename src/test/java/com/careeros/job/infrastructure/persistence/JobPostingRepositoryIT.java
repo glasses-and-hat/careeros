@@ -35,7 +35,7 @@ class JobPostingRepositoryIT extends AbstractPostgresIntegrationTest {
 
     private Company persistedCompany() {
         Company company = Company.create(
-                "Acme Inc " + System.nanoTime(), "https://acme.example/careers", AtsType.GREENHOUSE, Priority.HIGH, true);
+                "Acme Inc " + System.nanoTime(), "https://acme.example/careers", AtsType.GREENHOUSE, Priority.HIGH, true, "acme");
         return entityManager.persistAndFlush(company);
     }
 

@@ -32,13 +32,15 @@ public class CompanyService {
             throw new DuplicateResourceException("A company named '%s' already exists".formatted(command.name()));
         }
         Company company = Company.create(
-                command.name(), command.careerUrl(), command.atsType(), command.priority(), command.enabled());
+                command.name(), command.careerUrl(), command.atsType(), command.priority(), command.enabled(),
+                command.atsIdentifier());
         return companyRepository.save(company);
     }
 
     public Company update(UUID id, CompanyCommand command) {
         Company company = getOrThrow(id);
-        company.updateDetails(command.name(), command.careerUrl(), command.atsType(), command.priority());
+        company.updateDetails(command.name(), command.careerUrl(), command.atsType(), command.priority(),
+                command.atsIdentifier());
         if (command.enabled()) {
             company.enable();
         } else {

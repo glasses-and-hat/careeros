@@ -16,6 +16,8 @@ final class UserPreferenceMapper {
                 preference.getLocations(),
                 preference.getMinimumScore(),
                 preference.isRemoteOnly(),
+                preference.getSalaryMin(), preference.getSalaryMax(), preference.getSalaryCurrency(),
+                preference.getIgnoredCompanies(), preference.getIgnoredKeywords(), preference.isVisaSponsorshipPreferred(),
                 preference.getCreatedAt(),
                 preference.getUpdatedAt());
     }
@@ -26,6 +28,7 @@ final class UserPreferenceMapper {
                 request.technologies(),
                 request.locations(),
                 request.minimumScore(),
-                request.remoteOnly());
+                request.remoteOnly(), request.salaryMin(), request.salaryMax(), request.salaryCurrency(),
+                request.ignoredCompanies(), request.ignoredKeywords(), request.visaSponsorshipPreferred());
     }
 }

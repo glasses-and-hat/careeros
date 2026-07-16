@@ -1,10 +1,59 @@
-# CareerOS — Architecture (Milestones 1–2)
+# CareerOS — Architecture (Milestones 1–3)
 
 CareerOS is built as a **modular monolith** using **Hexagonal Architecture
 (Ports & Adapters)**. Each business capability (company, job, preference) is
 a self-contained module with its own domain, application, infrastructure,
 and web layers. Modules communicate through public domain types, never
 through infrastructure details.
+
+## Milestone 3 discovery modules
+
+Milestone 3 adds `matching`, `watchlist`, `application`, `search`, and
+`discovery` modules. Mutable aggregates retain domain repository ports and
+package-private Spring Data adapters. The `discovery` application service is
+a read-model orchestrator: it reads through those ports, applies the pure
+deterministic matcher, and returns endpoint-specific projections. Controllers
+only validate/bind requests and map application results.
+
+Matching weights live under `careeros.matching.weights`; startup fails when
+they do not total 100. Scores are computed at read time so preference changes
+take effect immediately and no stale denormalized score needs maintenance.
+
+## Dashboard aggregation
+
+```mermaid
+sequenceDiagram
+    actor Client
+    participant API as DiscoveryController
+    participant App as DailyDiscoveryService
+    participant Jobs as JobPostingRepository
+    participant Prefs as UserPreferenceRepository
+    participant Apps as JobApplicationRepository
+    participant Watches as WatchlistRepository
+    participant Matcher as JobMatchingService
+    Client->>API: GET /api/dashboard
+    API->>App: dashboard()
+    par Load bounded recent job set
+      App->>Jobs: findAll(filter, PageRequest)
+    and Load active preference
+      App->>Prefs: findAll(latest)
+    and Load tracked applications
+      App->>Apps: findAll()
+    and Load watchlists
+      App->>Watches: findAll()
+    end
+    loop each discovered job
+      App->>Matcher: score(job, preference)
+      Matcher-->>App: deterministic score + explanation
+    end
+    App->>App: aggregate counts, reminders, analytics, top matches
+    App-->>API: Dashboard projection
+    API-->>Client: one JSON response
+```
+
+The dashboard query is deliberately bounded to 500 recent postings. At a
+larger data volume this port can be replaced by a database projection without
+changing the controller or matching domain contract.
 
 ## Why hexagonal, and why a monolith first
 

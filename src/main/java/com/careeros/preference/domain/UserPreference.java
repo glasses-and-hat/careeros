@@ -15,6 +15,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 import java.util.UUID;
+import java.math.BigDecimal;
 
 /**
  * A user's job search preferences, used to score and filter discovered job
@@ -51,6 +52,21 @@ public class UserPreference extends AuditableEntity {
     @Column(name = "remote_only", nullable = false)
     private boolean remoteOnly;
 
+    @Column(name = "salary_min") private BigDecimal salaryMin;
+    @Column(name = "salary_max") private BigDecimal salaryMax;
+    @Column(name = "salary_currency", length = 3) private String salaryCurrency;
+    @Column(name = "visa_sponsorship_preferred", nullable = false) private boolean visaSponsorshipPreferred;
+
+    @ElementCollection(fetch = FetchType.EAGER)
+    @CollectionTable(name = "user_preference_ignored_companies", joinColumns = @JoinColumn(name = "user_preference_id"))
+    @Column(name = "company_name", nullable = false)
+    private List<String> ignoredCompanies = new ArrayList<>();
+
+    @ElementCollection(fetch = FetchType.EAGER)
+    @CollectionTable(name = "user_preference_ignored_keywords", joinColumns = @JoinColumn(name = "user_preference_id"))
+    @Column(name = "keyword", nullable = false)
+    private List<String> ignoredKeywords = new ArrayList<>();
+
     protected UserPreference() {
         // required by JPA
     }
@@ -76,6 +92,16 @@ public class UserPreference extends AuditableEntity {
         this.locations = new ArrayList<>(requireNonNull(locations, "locations"));
         this.minimumScore = requireInRange(minimumScore);
         this.remoteOnly = remoteOnly;
+    }
+
+    public void expand(BigDecimal salaryMin, BigDecimal salaryMax, String salaryCurrency,
+                       List<String> ignoredCompanies, List<String> ignoredKeywords, boolean visaSponsorshipPreferred) {
+        if (salaryMin != null && salaryMax != null && salaryMin.compareTo(salaryMax) > 0)
+            throw new IllegalArgumentException("salaryMin must not exceed salaryMax");
+        this.salaryMin = salaryMin; this.salaryMax = salaryMax; this.salaryCurrency = salaryCurrency;
+        this.ignoredCompanies = new ArrayList<>(requireNonNull(ignoredCompanies, "ignoredCompanies"));
+        this.ignoredKeywords = new ArrayList<>(requireNonNull(ignoredKeywords, "ignoredKeywords"));
+        this.visaSponsorshipPreferred = visaSponsorshipPreferred;
     }
 
     private static List<String> requireNonNull(List<String> value, String field) {
@@ -112,6 +138,12 @@ public class UserPreference extends AuditableEntity {
     public boolean isRemoteOnly() {
         return remoteOnly;
     }
+    public BigDecimal getSalaryMin() { return salaryMin; }
+    public BigDecimal getSalaryMax() { return salaryMax; }
+    public String getSalaryCurrency() { return salaryCurrency; }
+    public List<String> getIgnoredCompanies() { return List.copyOf(ignoredCompanies); }
+    public List<String> getIgnoredKeywords() { return List.copyOf(ignoredKeywords); }
+    public boolean isVisaSponsorshipPreferred() { return visaSponsorshipPreferred; }
 
     @Override
     public boolean equals(Object o) {

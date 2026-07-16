@@ -72,6 +72,14 @@ logging:
     console: "%d{yyyy-MM-dd HH:mm:ss.SSS} %-5level [%thread] %logger{36} - %msg%n"
 
 careeros:
+  matching:
+    weights:
+      role: 30
+      technology: 30
+      location: 15
+      remote: 10
+      company-priority: 10
+      recency: 5
   info:
     name: CareerOS
     description: AI-powered job discovery and career management platform

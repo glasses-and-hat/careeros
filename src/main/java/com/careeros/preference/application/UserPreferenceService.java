@@ -24,6 +24,7 @@ public class UserPreferenceService {
         UserPreference preference = UserPreference.create(
                 command.roles(), command.technologies(), command.locations(),
                 command.minimumScore(), command.remoteOnly());
+        expand(preference, command);
         return userPreferenceRepository.save(preference);
     }
 
@@ -31,8 +32,15 @@ public class UserPreferenceService {
         UserPreference preference = getOrThrow(id);
         preference.update(command.roles(), command.technologies(), command.locations(),
                 command.minimumScore(), command.remoteOnly());
+        expand(preference, command);
         return userPreferenceRepository.save(preference);
     }
+
+    private static void expand(UserPreference p, UserPreferenceCommand c) {
+        p.expand(c.salaryMin(), c.salaryMax(), c.salaryCurrency(), safe(c.ignoredCompanies()),
+                safe(c.ignoredKeywords()), c.visaSponsorshipPreferred());
+    }
+    private static <T> java.util.List<T> safe(java.util.List<T> v) { return v == null ? java.util.List.of() : v; }
 
     @Transactional(readOnly = true)
     public UserPreference get(UUID id) {

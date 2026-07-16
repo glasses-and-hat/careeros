@@ -3,12 +3,12 @@ package com.careeros.job.web;
 import com.careeros.job.application.JobPostingCommand;
 import com.careeros.job.domain.JobPosting;
 
-final class JobPostingMapper {
+public final class JobPostingMapper {
 
     private JobPostingMapper() {
     }
 
-    static JobPostingResponse toResponse(JobPosting jobPosting) {
+    public static JobPostingResponse toResponse(JobPosting jobPosting) {
         return new JobPostingResponse(
                 jobPosting.getId(),
                 jobPosting.getExternalId(),

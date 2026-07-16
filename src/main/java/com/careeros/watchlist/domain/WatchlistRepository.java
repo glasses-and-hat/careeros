@@ -1,0 +1,1 @@
+package com.careeros.watchlist.domain; import org.springframework.data.domain.*; import java.util.*; public interface WatchlistRepository {Watchlist save(Watchlist w);Optional<Watchlist> findById(UUID id);Page<Watchlist> findAll(Pageable p);List<Watchlist> findAll();void deleteById(UUID id);}

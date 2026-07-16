@@ -1,0 +1,1 @@
+package com.careeros.search.domain; import org.springframework.data.domain.*;import java.util.*;public interface SavedSearchRepository{SavedSearch save(SavedSearch s);Optional<SavedSearch>findById(UUID id);Page<SavedSearch>findAll(Pageable p);void deleteById(UUID id);}

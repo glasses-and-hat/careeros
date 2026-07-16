@@ -10,6 +10,10 @@ import java.util.UUID;
 
 interface SpringDataJobPostingRepository extends JpaRepository<JobPosting, UUID>, JpaSpecificationExecutor<JobPosting> {
 
+    @Override
+    @EntityGraph(attributePaths = "company")
+    org.springframework.data.domain.Page<JobPosting> findAll(org.springframework.data.jpa.domain.Specification<JobPosting> spec, org.springframework.data.domain.Pageable pageable);
+
     /**
      * {@code company} is lazy and open-in-view is disabled, so callers that
      * map a {@code JobPosting} to a response DTO outside the transaction

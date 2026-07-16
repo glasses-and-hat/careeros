@@ -5,22 +5,28 @@
  * OpenAPI spec version: 0.4.0
  */
 import {
+  useMutation,
   useQuery
 } from '@tanstack/react-query';
 import type {
   DataTag,
   DefinedInitialDataOptions,
   DefinedUseQueryResult,
+  MutationFunction,
   QueryClient,
   QueryFunction,
   QueryKey,
   UndefinedInitialDataOptions,
+  UseMutationOptions,
+  UseMutationResult,
   UseQueryOptions,
   UseQueryResult
 } from '@tanstack/react-query';
 
 import type {
+  Company,
   CompanyPage,
+  CompanyRequest,
   ListCompaniesParams
 } from '.././model';
 
@@ -144,3 +150,235 @@ export function useListCompanies<TData = Awaited<ReturnType<typeof listCompanies
 
 
 
+export type createCompanyResponse201 = {
+  data: Company
+  status: 201
+}
+    
+export type createCompanyResponseSuccess = (createCompanyResponse201) & {
+  headers: Headers;
+};
+;
+
+export type createCompanyResponse = (createCompanyResponseSuccess)
+
+export const getCreateCompanyUrl = () => {
+
+
+  
+
+  return `/api/v1/companies`
+}
+
+export const createCompany = async (companyRequest: CompanyRequest, options?: RequestInit): Promise<createCompanyResponse> => {
+  
+  return apiFetch<createCompanyResponse>(getCreateCompanyUrl(),
+  {      
+    ...options,
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json', ...options?.headers },
+    body: JSON.stringify(
+      companyRequest,)
+  }
+);}
+
+
+
+
+export const getCreateCompanyMutationOptions = <TError = unknown,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof createCompany>>, TError,{data: CompanyRequest}, TContext>, request?: SecondParameter<typeof apiFetch>}
+): UseMutationOptions<Awaited<ReturnType<typeof createCompany>>, TError,{data: CompanyRequest}, TContext> => {
+
+const mutationKey = ['createCompany'];
+const {mutation: mutationOptions, request: requestOptions} = options ?
+      options.mutation && 'mutationKey' in options.mutation && options.mutation.mutationKey ?
+      options
+      : {...options, mutation: {...options.mutation, mutationKey}}
+      : {mutation: { mutationKey, }, request: undefined};
+
+      
+
+
+      const mutationFn: MutationFunction<Awaited<ReturnType<typeof createCompany>>, {data: CompanyRequest}> = (props) => {
+          const {data} = props ?? {};
+
+          return  createCompany(data,requestOptions)
+        }
+
+        
+
+
+  return  { mutationFn, ...mutationOptions }}
+
+    export type CreateCompanyMutationResult = NonNullable<Awaited<ReturnType<typeof createCompany>>>
+    export type CreateCompanyMutationBody = CompanyRequest
+    export type CreateCompanyMutationError = unknown
+
+    export const useCreateCompany = <TError = unknown,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof createCompany>>, TError,{data: CompanyRequest}, TContext>, request?: SecondParameter<typeof apiFetch>}
+ , queryClient?: QueryClient): UseMutationResult<
+        Awaited<ReturnType<typeof createCompany>>,
+        TError,
+        {data: CompanyRequest},
+        TContext
+      > => {
+
+      const mutationOptions = getCreateCompanyMutationOptions(options);
+
+      return useMutation(mutationOptions, queryClient);
+    }
+    export type updateCompanyResponse200 = {
+  data: Company
+  status: 200
+}
+    
+export type updateCompanyResponseSuccess = (updateCompanyResponse200) & {
+  headers: Headers;
+};
+;
+
+export type updateCompanyResponse = (updateCompanyResponseSuccess)
+
+export const getUpdateCompanyUrl = (id: string,) => {
+
+
+  
+
+  return `/api/v1/companies/${id}`
+}
+
+export const updateCompany = async (id: string,
+    companyRequest: CompanyRequest, options?: RequestInit): Promise<updateCompanyResponse> => {
+  
+  return apiFetch<updateCompanyResponse>(getUpdateCompanyUrl(id),
+  {      
+    ...options,
+    method: 'PUT',
+    headers: { 'Content-Type': 'application/json', ...options?.headers },
+    body: JSON.stringify(
+      companyRequest,)
+  }
+);}
+
+
+
+
+export const getUpdateCompanyMutationOptions = <TError = unknown,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof updateCompany>>, TError,{id: string;data: CompanyRequest}, TContext>, request?: SecondParameter<typeof apiFetch>}
+): UseMutationOptions<Awaited<ReturnType<typeof updateCompany>>, TError,{id: string;data: CompanyRequest}, TContext> => {
+
+const mutationKey = ['updateCompany'];
+const {mutation: mutationOptions, request: requestOptions} = options ?
+      options.mutation && 'mutationKey' in options.mutation && options.mutation.mutationKey ?
+      options
+      : {...options, mutation: {...options.mutation, mutationKey}}
+      : {mutation: { mutationKey, }, request: undefined};
+
+      
+
+
+      const mutationFn: MutationFunction<Awaited<ReturnType<typeof updateCompany>>, {id: string;data: CompanyRequest}> = (props) => {
+          const {id,data} = props ?? {};
+
+          return  updateCompany(id,data,requestOptions)
+        }
+
+        
+
+
+  return  { mutationFn, ...mutationOptions }}
+
+    export type UpdateCompanyMutationResult = NonNullable<Awaited<ReturnType<typeof updateCompany>>>
+    export type UpdateCompanyMutationBody = CompanyRequest
+    export type UpdateCompanyMutationError = unknown
+
+    export const useUpdateCompany = <TError = unknown,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof updateCompany>>, TError,{id: string;data: CompanyRequest}, TContext>, request?: SecondParameter<typeof apiFetch>}
+ , queryClient?: QueryClient): UseMutationResult<
+        Awaited<ReturnType<typeof updateCompany>>,
+        TError,
+        {id: string;data: CompanyRequest},
+        TContext
+      > => {
+
+      const mutationOptions = getUpdateCompanyMutationOptions(options);
+
+      return useMutation(mutationOptions, queryClient);
+    }
+    export type deleteCompanyResponse204 = {
+  data: void
+  status: 204
+}
+    
+export type deleteCompanyResponseSuccess = (deleteCompanyResponse204) & {
+  headers: Headers;
+};
+;
+
+export type deleteCompanyResponse = (deleteCompanyResponseSuccess)
+
+export const getDeleteCompanyUrl = (id: string,) => {
+
+
+  
+
+  return `/api/v1/companies/${id}`
+}
+
+export const deleteCompany = async (id: string, options?: RequestInit): Promise<deleteCompanyResponse> => {
+  
+  return apiFetch<deleteCompanyResponse>(getDeleteCompanyUrl(id),
+  {      
+    ...options,
+    method: 'DELETE'
+    
+    
+  }
+);}
+
+
+
+
+export const getDeleteCompanyMutationOptions = <TError = unknown,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof deleteCompany>>, TError,{id: string}, TContext>, request?: SecondParameter<typeof apiFetch>}
+): UseMutationOptions<Awaited<ReturnType<typeof deleteCompany>>, TError,{id: string}, TContext> => {
+
+const mutationKey = ['deleteCompany'];
+const {mutation: mutationOptions, request: requestOptions} = options ?
+      options.mutation && 'mutationKey' in options.mutation && options.mutation.mutationKey ?
+      options
+      : {...options, mutation: {...options.mutation, mutationKey}}
+      : {mutation: { mutationKey, }, request: undefined};
+
+      
+
+
+      const mutationFn: MutationFunction<Awaited<ReturnType<typeof deleteCompany>>, {id: string}> = (props) => {
+          const {id} = props ?? {};
+
+          return  deleteCompany(id,requestOptions)
+        }
+
+        
+
+
+  return  { mutationFn, ...mutationOptions }}
+
+    export type DeleteCompanyMutationResult = NonNullable<Awaited<ReturnType<typeof deleteCompany>>>
+    
+    export type DeleteCompanyMutationError = unknown
+
+    export const useDeleteCompany = <TError = unknown,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof deleteCompany>>, TError,{id: string}, TContext>, request?: SecondParameter<typeof apiFetch>}
+ , queryClient?: QueryClient): UseMutationResult<
+        Awaited<ReturnType<typeof deleteCompany>>,
+        TError,
+        {id: string},
+        TContext
+      > => {
+
+      const mutationOptions = getDeleteCompanyMutationOptions(options);
+
+      return useMutation(mutationOptions, queryClient);
+    }
+    

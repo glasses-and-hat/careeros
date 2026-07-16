@@ -1,0 +1,1 @@
+package com.careeros.provider.domain;import org.springframework.data.domain.*;import java.util.*;public interface SyncHistoryRepository{SyncHistory save(SyncHistory h);Page<SyncHistory>findAll(Pageable p);Page<SyncHistory>findByCompanyId(UUID id,Pageable p);Page<SyncHistory>findByProvider(ProviderType p,Pageable page);List<SyncHistory>findAll();}

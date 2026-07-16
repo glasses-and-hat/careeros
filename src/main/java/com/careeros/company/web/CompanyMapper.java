@@ -17,6 +17,7 @@ final class CompanyMapper {
                 company.getPriority(),
                 company.isEnabled(),
                 company.getAtsIdentifier(),
+                company.getProviderType(), company.getProviderConfiguration(), company.getFallbackProviders(),
                 company.getCreatedAt(),
                 company.getUpdatedAt());
     }
@@ -28,6 +29,6 @@ final class CompanyMapper {
                 request.atsType(),
                 request.priority(),
                 request.enabled(),
-                request.atsIdentifier());
+                request.atsIdentifier(), request.providerType(), request.providerConfiguration(), request.fallbackProviders());
     }
 }

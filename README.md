@@ -169,6 +169,7 @@ Hibernate `ddl-auto` is `none`. Add new migrations as
 | `V3` | `user_preferences` + its `roles`/`technologies`/`locations` collection tables |
 | `V4` | Adds nullable `ats_identifier` column to `companies` |
 | `V5` | Job discovery, applications, watchlists, searches, and reminders |
+| `V6` | Provider configuration, fallback chains, sync history, and health metrics |
 
 ## Frontend application
 

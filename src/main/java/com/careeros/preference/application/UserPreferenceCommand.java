@@ -10,11 +10,12 @@ public record UserPreferenceCommand(
         int minimumScore,
         boolean remoteOnly,
         BigDecimal salaryMin, BigDecimal salaryMax, String salaryCurrency,
-        List<String> ignoredCompanies, List<String> ignoredKeywords, boolean visaSponsorshipPreferred
+        List<String> ignoredCompanies, List<String> ignoredKeywords, boolean visaSponsorshipPreferred,
+        boolean unitedStatesOnly
 ) {
     public UserPreferenceCommand(List<String> roles, List<String> technologies, List<String> locations,
                                  int minimumScore, boolean remoteOnly) {
         this(roles, technologies, locations, minimumScore, remoteOnly, null, null, null,
-                List.of(), List.of(), false);
+                List.of(), List.of(), false, false);
     }
 }

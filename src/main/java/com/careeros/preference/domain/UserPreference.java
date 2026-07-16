@@ -56,6 +56,7 @@ public class UserPreference extends AuditableEntity {
     @Column(name = "salary_max") private BigDecimal salaryMax;
     @Column(name = "salary_currency", length = 3) private String salaryCurrency;
     @Column(name = "visa_sponsorship_preferred", nullable = false) private boolean visaSponsorshipPreferred;
+    @Column(name = "united_states_only", nullable = false) private boolean unitedStatesOnly;
 
     @ElementCollection(fetch = FetchType.EAGER)
     @CollectionTable(name = "user_preference_ignored_companies", joinColumns = @JoinColumn(name = "user_preference_id"))
@@ -95,13 +96,15 @@ public class UserPreference extends AuditableEntity {
     }
 
     public void expand(BigDecimal salaryMin, BigDecimal salaryMax, String salaryCurrency,
-                       List<String> ignoredCompanies, List<String> ignoredKeywords, boolean visaSponsorshipPreferred) {
+                       List<String> ignoredCompanies, List<String> ignoredKeywords, boolean visaSponsorshipPreferred,
+                       boolean unitedStatesOnly) {
         if (salaryMin != null && salaryMax != null && salaryMin.compareTo(salaryMax) > 0)
             throw new IllegalArgumentException("salaryMin must not exceed salaryMax");
         this.salaryMin = salaryMin; this.salaryMax = salaryMax; this.salaryCurrency = salaryCurrency;
         this.ignoredCompanies = new ArrayList<>(requireNonNull(ignoredCompanies, "ignoredCompanies"));
         this.ignoredKeywords = new ArrayList<>(requireNonNull(ignoredKeywords, "ignoredKeywords"));
         this.visaSponsorshipPreferred = visaSponsorshipPreferred;
+        this.unitedStatesOnly = unitedStatesOnly;
     }
 
     private static List<String> requireNonNull(List<String> value, String field) {
@@ -144,6 +147,7 @@ public class UserPreference extends AuditableEntity {
     public List<String> getIgnoredCompanies() { return List.copyOf(ignoredCompanies); }
     public List<String> getIgnoredKeywords() { return List.copyOf(ignoredKeywords); }
     public boolean isVisaSponsorshipPreferred() { return visaSponsorshipPreferred; }
+    public boolean isUnitedStatesOnly() { return unitedStatesOnly; }
 
     @Override
     public boolean equals(Object o) {

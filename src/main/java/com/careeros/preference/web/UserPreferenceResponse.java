@@ -14,6 +14,7 @@ public record UserPreferenceResponse(
         boolean remoteOnly,
         BigDecimal salaryMin, BigDecimal salaryMax, String salaryCurrency,
         List<String> ignoredCompanies, List<String> ignoredKeywords, boolean visaSponsorshipPreferred,
+        boolean unitedStatesOnly,
         Instant createdAt,
         Instant updatedAt
 ) {

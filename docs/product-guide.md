@@ -323,6 +323,12 @@ The most recently updated preference record is used by discovery. For a clear
 single-tenant workflow, keep one preference record and update it instead of
 creating several.
 
+Set `unitedStatesOnly` to `true` for a hard country constraint. CareerOS then
+requires the normalized job location to explicitly identify the United States,
+a US state/state code, or Chicago. Ambiguous global `Remote` postings are
+excluded; use a location such as `Remote - United States` when configuring
+preferences.
+
 ### Applications
 
 | Method | Endpoint | Purpose |
@@ -422,6 +428,25 @@ curl -X POST http://localhost:8080/api/applications \
     "notes": "Applied through referral"
   }'
 ```
+
+## Universal provider monitoring
+
+Companies can select a primary provider and ordered fallbacks. Supported types
+are `GREENHOUSE`, `LEVER`, `ASHBY`, `WORKDAY`, `SMARTRECRUITERS`,
+`GENERIC_HTML`, `GENERIC_RSS`, `GENERIC_JSON`, and `CUSTOM_PROVIDER`.
+
+Provider operations are available at:
+
+- `GET /api/sync-history`
+- `GET /api/sync-history/company/{id}`
+- `GET /api/sync-history/provider/{provider}`
+- `GET /api/provider-health`
+- `GET /actuator/metrics/provider.sync.count`
+
+Generic provider configuration is supplied as JSON in the company's
+`providerConfiguration`; `fallbackProviders` is an ordered provider-type list.
+HTML supports configured job/title/location/link selectors and bounded
+pagination. RSS supports RSS 2.0 and Atom. JSON supports dotted nested fields.
 
 ## Matching and reminders
 

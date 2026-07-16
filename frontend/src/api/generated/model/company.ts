@@ -4,6 +4,7 @@
  * CareerOS API
  * OpenAPI spec version: 0.4.0
  */
+import type { ProviderType } from './providerType';
 
 export interface Company {
   id: string;
@@ -12,5 +13,10 @@ export interface Company {
   atsType: string;
   priority: string;
   enabled: boolean;
+  atsIdentifier?: string;
+  providerType?: ProviderType;
+  providerConfiguration?: string;
+  fallbackProviders?: ProviderType[];
   createdAt?: string;
+  updatedAt?: string;
 }

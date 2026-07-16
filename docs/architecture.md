@@ -55,6 +55,65 @@ The dashboard query is deliberately bounded to 500 recent postings. At a
 larger data volume this port can be replaced by a database projection without
 changing the controller or matching domain contract.
 
+## Milestone 5 provider-based ingestion
+
+Ingestion is resolved by capability rather than scheduler branches. Existing
+ATS connectors and generic providers implement the same `JobProvider` port.
+The registry discovers implementations and rejects duplicate registrations.
+
+```mermaid
+flowchart LR
+    S[Scheduler] --> E[Synchronization Engine]
+    E --> C[Company Provider Configuration]
+    E --> R[JobProviderRegistry]
+    R --> ATS[Standard ATS Providers]
+    R --> HTML[Generic HTML]
+    R --> RSS[Generic RSS / Atom]
+    R --> JSON[Generic JSON]
+    R -.future.-> CUSTOM[Company-specific Providers]
+    E --> J[JobPostingService]
+    E --> H[Sync History]
+    E --> M[Micrometer]
+```
+
+```mermaid
+sequenceDiagram
+    participant Scheduler
+    participant Engine as JobIngestionService
+    participant Registry as JobProviderRegistry
+    participant Primary as Primary Provider
+    participant Fallback as Fallback Provider
+    participant Jobs as JobPostingService
+    participant History as SyncHistoryService
+    Scheduler->>Engine: ingest enabled companies
+    Engine->>Registry: resolve(primary)
+    Engine->>Primary: fetchJobs(company)
+    alt primary succeeds
+      Primary-->>Engine: normalized jobs
+    else primary fails
+      Engine->>History: record failure
+      Engine->>Registry: resolve(fallback)
+      Engine->>Fallback: fetchJobs(company)
+      Fallback-->>Engine: normalized jobs
+    end
+    loop each job
+      Engine->>Jobs: create(command)
+    end
+    Engine->>History: record provider, duration, counts
+```
+
+A successful provider—including a valid feed with zero current jobs—stops the
+chain. Exceptions advance to the next fallback. Every actual attempt is stored
+independently for health aggregation.
+
+Provider lifecycle:
+
+1. Implement `JobProvider` with a unique `ProviderType`.
+2. Register the adapter as a Spring component.
+3. Document and validate its JSON configuration.
+4. The registry makes it available without scheduler changes.
+5. Every synchronization emits history and Micrometer metrics.
+
 ## Why hexagonal, and why a monolith first
 
 The eventual system needs ATS connectors (Greenhouse, Lever, Ashby, Workday,

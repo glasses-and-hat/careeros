@@ -34,6 +34,8 @@ public class CompanyService {
         Company company = Company.create(
                 command.name(), command.careerUrl(), command.atsType(), command.priority(), command.enabled(),
                 command.atsIdentifier());
+        if (command.providerType() != null) company.configureProvider(command.providerType(),
+                command.providerConfiguration(), command.fallbackProviders());
         return companyRepository.save(company);
     }
 
@@ -41,6 +43,8 @@ public class CompanyService {
         Company company = getOrThrow(id);
         company.updateDetails(command.name(), command.careerUrl(), command.atsType(), command.priority(),
                 command.atsIdentifier());
+        if (command.providerType() != null) company.configureProvider(command.providerType(),
+                command.providerConfiguration(), command.fallbackProviders());
         if (command.enabled()) {
             company.enable();
         } else {

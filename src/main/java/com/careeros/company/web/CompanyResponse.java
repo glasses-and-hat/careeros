@@ -5,6 +5,8 @@ import com.careeros.company.domain.Priority;
 
 import java.time.Instant;
 import java.util.UUID;
+import java.util.List;
+import com.careeros.provider.domain.ProviderType;
 
 public record CompanyResponse(
         UUID id,
@@ -14,6 +16,9 @@ public record CompanyResponse(
         Priority priority,
         boolean enabled,
         String atsIdentifier,
+        ProviderType providerType,
+        String providerConfiguration,
+        List<ProviderType> fallbackProviders,
         Instant createdAt,
         Instant updatedAt
 ) {

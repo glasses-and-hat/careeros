@@ -5,6 +5,8 @@ import com.careeros.company.domain.Company;
 import com.careeros.job.application.JobPostingCommand;
 
 import java.util.List;
+import com.careeros.provider.application.JobProvider;
+import com.careeros.provider.domain.ProviderType;
 
 /**
  * Port for fetching normalized job postings from a specific ATS's public
@@ -16,9 +18,12 @@ import java.util.List;
  * single place that catches and isolates per-company fetch failures so that
  * error handling isn't duplicated across every connector.
  */
-public interface AtsConnector {
+public interface AtsConnector extends JobProvider {
 
     AtsType supportedType();
+
+    @Override
+    default ProviderType providerType() { return ProviderType.valueOf(supportedType().name()); }
 
     List<JobPostingCommand> fetchJobs(Company company);
 }

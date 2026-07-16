@@ -11,6 +11,13 @@ import org.hibernate.annotations.UuidGenerator;
 
 import java.util.Objects;
 import java.util.UUID;
+import java.util.ArrayList;
+import java.util.List;
+import com.careeros.provider.domain.ProviderType;
+import jakarta.persistence.CollectionTable;
+import jakarta.persistence.ElementCollection;
+import jakarta.persistence.FetchType;
+import jakarta.persistence.JoinColumn;
 
 /**
  * A company being monitored for new job postings. This is the aggregate
@@ -46,6 +53,19 @@ public class Company extends AuditableEntity {
     @Column(name = "ats_identifier")
     private String atsIdentifier;
 
+    @Enumerated(EnumType.STRING)
+    @Column(name = "provider_type", length = 32)
+    private ProviderType providerType;
+
+    @Column(name = "provider_configuration", columnDefinition = "TEXT")
+    private String providerConfiguration;
+
+    @ElementCollection(fetch = FetchType.EAGER)
+    @CollectionTable(name = "company_fallback_providers", joinColumns = @JoinColumn(name = "company_id"))
+    @Enumerated(EnumType.STRING)
+    @Column(name = "provider_type", nullable = false)
+    private List<ProviderType> fallbackProviders = new ArrayList<>();
+
     protected Company() {
         // required by JPA
     }
@@ -58,6 +78,7 @@ public class Company extends AuditableEntity {
         this.priority = Objects.requireNonNull(priority, "priority must not be null");
         this.enabled = enabled;
         this.atsIdentifier = requireAtsIdentifierIfNeeded(atsType, atsIdentifier);
+        this.providerType = atsType == AtsType.OTHER ? null : ProviderType.valueOf(atsType.name());
     }
 
     public static Company create(String name, String careerUrl, AtsType atsType, Priority priority, boolean enabled,
@@ -79,6 +100,13 @@ public class Company extends AuditableEntity {
 
     public void disable() {
         this.enabled = false;
+    }
+
+    public void configureProvider(ProviderType providerType, String providerConfiguration,
+                                  List<ProviderType> fallbackProviders) {
+        this.providerType = providerType;
+        this.providerConfiguration = providerConfiguration;
+        this.fallbackProviders = new ArrayList<>(fallbackProviders == null ? List.of() : fallbackProviders);
     }
 
     private static String requireNonBlank(String value, String field) {
@@ -127,6 +155,9 @@ public class Company extends AuditableEntity {
     public String getAtsIdentifier() {
         return atsIdentifier;
     }
+    public ProviderType getProviderType() { return providerType; }
+    public String getProviderConfiguration() { return providerConfiguration; }
+    public List<ProviderType> getFallbackProviders() { return List.copyOf(fallbackProviders); }
 
     @Override
     public boolean equals(Object o) {

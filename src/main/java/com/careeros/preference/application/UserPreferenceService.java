@@ -38,7 +38,7 @@ public class UserPreferenceService {
 
     private static void expand(UserPreference p, UserPreferenceCommand c) {
         p.expand(c.salaryMin(), c.salaryMax(), c.salaryCurrency(), safe(c.ignoredCompanies()),
-                safe(c.ignoredKeywords()), c.visaSponsorshipPreferred());
+                safe(c.ignoredKeywords()), c.visaSponsorshipPreferred(), c.unitedStatesOnly());
     }
     private static <T> java.util.List<T> safe(java.util.List<T> v) { return v == null ? java.util.List.of() : v; }
 

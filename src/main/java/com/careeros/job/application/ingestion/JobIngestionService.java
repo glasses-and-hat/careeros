@@ -1,102 +1,15 @@
 package com.careeros.job.application.ingestion;
 
-import com.careeros.common.exception.DuplicateResourceException;
-import com.careeros.common.exception.ResourceNotFoundException;
-import com.careeros.company.domain.AtsType;
-import com.careeros.company.domain.Company;
-import com.careeros.company.domain.CompanyRepository;
-import com.careeros.job.application.JobPostingCommand;
-import com.careeros.job.application.JobPostingService;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.stereotype.Service;
+import com.careeros.common.exception.*;import com.careeros.company.domain.*;import com.careeros.job.application.*;import com.careeros.provider.application.*;import com.careeros.provider.domain.*;import io.micrometer.core.instrument.*;import org.slf4j.*;import org.springframework.beans.factory.annotation.Autowired;import org.springframework.stereotype.Service;
+import java.time.Instant;import java.util.*;import java.util.function.Function;import java.util.stream.Collectors;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-import java.util.UUID;
-import java.util.function.Function;
-import java.util.stream.Collectors;
-
-/**
- * Orchestrates ATS ingestion: for each enabled company, dispatches to the
- * {@link AtsConnector} matching its {@link AtsType}, then persists each
- * fetched posting via {@link JobPostingService#create}.
- *
- * <p><b>Deliberately not {@code @Transactional}.</b> {@link JobPostingService#create}
- * is already transactional per call. If this class were also transactional,
- * every {@code create()} in a run would join the same physical transaction,
- * and Spring's AOP interceptor marks that transaction rollback-only on any
- * unchecked exception raised by a participating method — including
- * {@link DuplicateResourceException}, even though it's caught immediately
- * below. The first duplicate in a run would silently poison the whole batch,
- * surfacing only as {@code UnexpectedRollbackException} at commit time.
- * Staying non-transactional keeps each posting's {@code create()} call an
- * independent top-level transaction, so one posting's outcome can never
- * affect another's.
- */
-@Service
-public class JobIngestionService {
-
-    private static final Logger log = LoggerFactory.getLogger(JobIngestionService.class);
-
-    private final JobPostingService jobPostingService;
-    private final CompanyRepository companyRepository;
-    private final Map<AtsType, AtsConnector> connectorsByType;
-
-    public JobIngestionService(JobPostingService jobPostingService, CompanyRepository companyRepository,
-                                List<AtsConnector> connectors) {
-        this.jobPostingService = jobPostingService;
-        this.companyRepository = companyRepository;
-        this.connectorsByType = connectors.stream()
-                .collect(Collectors.toMap(AtsConnector::supportedType, Function.identity()));
-    }
-
-    public IngestionSummary ingestAllEnabledCompanies() {
-        return IngestionSummary.of(companyRepository.findAllEnabled().stream()
-                .map(this::ingestOneCompany)
-                .toList());
-    }
-
-    public IngestionSummary ingestCompany(UUID companyId) {
-        Company company = companyRepository.findById(companyId)
-                .orElseThrow(() -> ResourceNotFoundException.forId("Company", companyId));
-        return IngestionSummary.of(List.of(ingestOneCompany(company)));
-    }
-
-    private CompanyIngestionResult ingestOneCompany(Company company) {
-        AtsConnector connector = connectorsByType.get(company.getAtsType());
-        if (connector == null) {
-            return CompanyIngestionResult.unsupportedAtsType(company);
-        }
-
-        List<JobPostingCommand> commands;
-        try {
-            commands = connector.fetchJobs(company);
-        } catch (Exception e) {
-            log.warn("Ingestion fetch failed for company {} ({}): {}", company.getId(), company.getAtsType(),
-                    e.getMessage());
-            return CompanyIngestionResult.fetchFailed(company, e.getMessage());
-        }
-
-        int created = 0;
-        int skipped = 0;
-        int failed = 0;
-        List<String> errors = new ArrayList<>();
-        for (JobPostingCommand command : commands) {
-            try {
-                jobPostingService.create(command);
-                created++;
-            } catch (DuplicateResourceException e) {
-                skipped++;
-            } catch (Exception e) {
-                failed++;
-                errors.add(command.externalId() + ": " + e.getMessage());
-                log.warn("Failed to persist job posting {} for company {}: {}", command.externalId(),
-                        company.getId(), e.getMessage());
-            }
-        }
-        return new CompanyIngestionResult(company.getId(), company.getName(), company.getAtsType(), created,
-                skipped, failed, errors);
-    }
+@Service public class JobIngestionService {
+ private static final Logger log=LoggerFactory.getLogger(JobIngestionService.class);private final JobPostingService jobs;private final CompanyRepository companies;private final JobProviderRegistry registry;private final SyncHistoryService history;private final MeterRegistry metrics;
+ @Autowired public JobIngestionService(JobPostingService jobs,CompanyRepository companies,JobProviderRegistry registry,SyncHistoryService history,MeterRegistry metrics){this.jobs=jobs;this.companies=companies;this.registry=registry;this.history=history;this.metrics=metrics;}
+ public JobIngestionService(JobPostingService jobs,CompanyRepository companies,List<AtsConnector> connectors){this.jobs=jobs;this.companies=companies;Map<ProviderType,JobProvider>map;try{map=connectors.stream().collect(Collectors.toMap(JobProvider::providerType,Function.identity()));}catch(IllegalStateException e){throw new IllegalStateException("Duplicate job provider registration",e);}this.registry=type->Optional.ofNullable(map.get(type));this.history=null;this.metrics=null;}
+ public IngestionSummary ingestAllEnabledCompanies(){return IngestionSummary.of(companies.findAllEnabled().stream().map(this::ingestOneCompany).toList());}
+ public IngestionSummary ingestCompany(UUID id){return IngestionSummary.of(List.of(ingestOneCompany(companies.findById(id).orElseThrow(()->ResourceNotFoundException.forId("Company",id)))));}
+ private CompanyIngestionResult ingestOneCompany(Company company){List<ProviderType>chain=new ArrayList<>();if(company.getProviderType()!=null)chain.add(company.getProviderType());chain.addAll(company.getFallbackProviders());if(chain.isEmpty())return CompanyIngestionResult.unsupportedAtsType(company);List<String>errors=new ArrayList<>();for(ProviderType type:chain){Optional<JobProvider>provider=registry.resolve(type);if(provider.isEmpty()){errors.add(type+": no provider registered");continue;}Instant start=Instant.now();List<JobPostingCommand>commands;try{commands=provider.get().fetchJobs(company);}catch(Exception e){record(company,type,start,false,0,0,e.getMessage());metric(type,false,0,start);errors.add(type+": "+e.getMessage());log.warn("Provider {} failed for {}: {}",type,company.getName(),e.getMessage());continue;}int created=0,skipped=0,failed=0;for(var command:commands)try{jobs.create(command);created++;}catch(DuplicateResourceException e){skipped++;}catch(Exception e){failed++;errors.add(command.externalId()+": "+e.getMessage());}record(company,type,start,true,commands.size(),created,null);metric(type,true,commands.size(),start);return new CompanyIngestionResult(company.getId(),company.getName(),company.getAtsType(),created,skipped,failed,errors);}return new CompanyIngestionResult(company.getId(),company.getName(),company.getAtsType(),0,0,1,errors);}
+ private void record(Company c,ProviderType p,Instant start,boolean success,int found,int added,String error){if(history!=null)history.record(SyncHistory.record(c,p,start,success,found,added,0,error));}
+ private void metric(ProviderType p,boolean success,int found,Instant start){if(metrics==null)return;Tags tags=Tags.of("provider",p.name());metrics.counter("provider.sync.count",tags).increment();metrics.counter(success?"provider.sync.success":"provider.sync.failure",tags).increment();metrics.counter("provider.jobs.discovered",tags).increment(found);metrics.timer("provider.sync.duration",tags).record(java.time.Duration.between(start,Instant.now()));}
 }

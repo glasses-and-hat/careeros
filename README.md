@@ -257,3 +257,7 @@ npm run e2e          # browser smoke test against the preview server
 
 See [`docs/architecture.md`](docs/architecture.md) for how each of these is
 expected to plug into the existing module structure.
+
+For a complete setup, product workflow, frontend page, API, configuration, and
+troubleshooting reference, see the [CareerOS Product and Operations
+Guide](docs/product-guide.md).

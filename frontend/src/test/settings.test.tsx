@@ -1,0 +1,2 @@
+import{render,screen}from'@testing-library/react';import userEvent from'@testing-library/user-event';import{describe,it,expect,beforeEach}from'vitest';import SettingsPage from'@/pages/settings';import{useUIStore}from'@/stores/ui-store';
+describe('settings',()=>{beforeEach(()=>useUIStore.setState({theme:'system'}));it('changes the theme preference',async()=>{render(<SettingsPage/>);await userEvent.click(screen.getByRole('button',{name:/dark/i}));expect(useUIStore.getState().theme).toBe('dark')})});

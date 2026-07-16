@@ -1,0 +1,2 @@
+import{test,expect}from'@playwright/test';
+test('loads the shell and navigates with the sidebar',async({page})=>{await page.route('**/api/dashboard',r=>r.fulfill({json:{newJobsToday:3,highMatchJobs:1,applicationsNeedingFollowUp:0,topMatches:[],recentJobs:[],statistics:{}}}));await page.route('**/api/reminders',r=>r.fulfill({json:[]}));await page.goto('/');await expect(page.getByText(/Good (morning|afternoon|evening)/)).toBeVisible();await page.getByRole('link',{name:'Settings'}).click();await expect(page.getByRole('heading',{name:'Settings'})).toBeVisible()});

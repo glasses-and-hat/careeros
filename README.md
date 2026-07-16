@@ -168,18 +168,91 @@ Hibernate `ddl-auto` is `none`. Add new migrations as
 | `V2` | `job_postings` table (FK to companies, unique hash for duplicate detection) |
 | `V3` | `user_preferences` + its `roles`/`technologies`/`locations` collection tables |
 | `V4` | Adds nullable `ats_identifier` column to `companies` |
+| `V5` | Job discovery, applications, watchlists, searches, and reminders |
+
+## Frontend application
+
+The production frontend lives in [`frontend/`](frontend). It is a React 19
+single-page application built with Vite, strict TypeScript, Tailwind CSS,
+TanStack Query/Table, React Hook Form + Zod, Recharts, Framer Motion, and
+Zustand. Start the backend first, then run:
+
+```bash
+cd frontend
+npm install
+npm run dev
+```
+
+Vite serves the application at `http://localhost:5173` and proxies `/api`
+requests to `http://localhost:8080`. Create a production bundle with
+`npm run build`; preview it with `npm run preview`.
+
+### Frontend architecture
+
+```text
+frontend/src/
+├── api/
+│   ├── generated/       # Orval output; never edit by hand
+│   └── fetcher.ts       # shared HTTP/error boundary
+├── components/          # application shell and reusable UI primitives
+├── pages/               # lazy-loaded route features
+├── stores/              # persisted UI-only Zustand state
+├── lib/                 # formatting and styling utilities
+└── test/                # Vitest + React Testing Library
+```
+
+Server state belongs exclusively to TanStack Query. Mutations invalidate
+generated query keys; the application Kanban uses an optimistic cache update
+with rollback. Zustand only stores sidebar, theme, command-palette, and
+notification-panel state. It does not duplicate API data.
+
+Routes are lazy loaded under one responsive application shell. `/` is the
+daily dashboard; `/jobs`, `/applications`, `/companies`, `/watchlists`,
+`/searches`, `/analytics`, and `/settings` are independent route chunks. A
+route error boundary and wildcard 404 handle failures without losing the
+shell.
+
+Theme selection supports light, dark, and operating-system modes. The choice
+is persisted locally and applied at the document root, with WCAG-conscious
+focus rings and reduced-motion support. The sidebar state is persisted using
+the same UI store. Press `Ctrl/Cmd + K` for global navigation.
+
+### Typed API client
+
+[`frontend/openapi/careeros.yaml`](frontend/openapi/careeros.yaml) is the
+checked-in API contract snapshot. Regenerate all TypeScript models, request
+functions, TanStack Query hooks, and query keys with:
+
+```bash
+cd frontend
+npm run api:generate
+```
+
+Production source code imports only the generated operations. When backend
+contracts change, update the snapshot from `/v3/api-docs`, regenerate, and let
+TypeScript identify impacted screens.
+
+### Frontend tests
+
+```bash
+cd frontend
+npm test             # component and integration tests
+npm run build        # strict typecheck plus optimized production bundle
+npx playwright install chromium
+npm run e2e          # browser smoke test against the preview server
+```
 
 ## Project status / roadmap
 
 - [x] Milestone 1 — foundation: domain model, persistence, CRUD APIs, OpenAPI, tests, Docker
 - [x] Milestone 2 — ATS connectors (Greenhouse, Lever, Ashby, Workday, SmartRecruiters)
 - [ ] Duplicate detection (fuzzy/semantic, beyond the exact-hash check already in place)
-- [ ] Job matching / scoring against user preferences
+- [x] Job matching / scoring against user preferences
 - [ ] AI-assisted resume optimization (OpenAI, pgvector semantic matching)
 - [ ] Recruiter CRM
-- [ ] Notifications
-- [ ] Analytics
-- [ ] React/TypeScript/Tailwind frontend
+- [x] Notifications and reminders
+- [x] Analytics
+- [x] React/TypeScript/Tailwind frontend
 - [ ] Terraform/AWS infrastructure
 
 See [`docs/architecture.md`](docs/architecture.md) for how each of these is

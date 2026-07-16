@@ -1,0 +1,8 @@
+@import "tailwindcss";
+@custom-variant dark (&:where(.dark, .dark *));
+
+:root{font-family:Inter,ui-sans-serif,system-ui,-apple-system,sans-serif;color-scheme:light;--bg:#fafafa;--panel:#fff;--border:#e4e4e7;--muted:#71717a;--fg:#18181b;--accent:#4f46e5}
+.dark{color-scheme:dark;--bg:#09090b;--panel:#111113;--border:#27272a;--muted:#a1a1aa;--fg:#f4f4f5;--accent:#818cf8}
+*{border-color:var(--border)} body{margin:0;background:var(--bg);color:var(--fg);font-size:14px;-webkit-font-smoothing:antialiased} button,a{outline-offset:2px}button:focus-visible,a:focus-visible,[tabindex]:focus-visible{outline:2px solid var(--accent)}
+@layer components{.panel{@apply rounded-lg border bg-white dark:bg-zinc-950}.muted{@apply text-zinc-500 dark:text-zinc-400}.btn{@apply inline-flex h-8 items-center justify-center gap-2 rounded-md border bg-white px-3 text-xs font-medium transition hover:bg-zinc-50 disabled:opacity-50 dark:bg-zinc-950 dark:hover:bg-zinc-900}.btn-primary{@apply border-indigo-600 bg-indigo-600 text-white hover:bg-indigo-700 dark:bg-indigo-500 dark:hover:bg-indigo-600}.input{@apply h-8 rounded-md border bg-transparent px-3 text-sm placeholder:text-zinc-400}.badge{@apply inline-flex items-center rounded-full border px-2 py-0.5 text-[11px] font-medium}}
+@media(prefers-reduced-motion:reduce){*,*::before,*::after{scroll-behavior:auto!important;animation-duration:.01ms!important;transition-duration:.01ms!important}}

@@ -1,0 +1,2 @@
+import{render,screen}from'@testing-library/react';import{describe,it,expect}from'vitest';import{EmptyState,Badge}from'@/components/ui';
+describe('shared UI',()=>{it('renders an accessible empty state',()=>{render(<EmptyState title="No jobs" description="Adjust your filters"/>);expect(screen.getByRole('heading',{name:'No jobs'})).toBeInTheDocument();expect(screen.getByText('Adjust your filters')).toBeVisible()});it('renders badges',()=>{render(<Badge>Remote</Badge>);expect(screen.getByText('Remote')).toBeVisible()})});

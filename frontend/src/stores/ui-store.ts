@@ -1,0 +1,3 @@
+import {create} from 'zustand';import {persist} from 'zustand/middleware';
+type Theme='light'|'dark'|'system';type UIState={sidebarCollapsed:boolean;theme:Theme;commandOpen:boolean;notificationsOpen:boolean;toggleSidebar:()=>void;setTheme:(v:Theme)=>void;setCommandOpen:(v:boolean)=>void;setNotificationsOpen:(v:boolean)=>void};
+export const useUIStore=create<UIState>()(persist((set)=>({sidebarCollapsed:false,theme:'system',commandOpen:false,notificationsOpen:false,toggleSidebar:()=>set(s=>({sidebarCollapsed:!s.sidebarCollapsed})),setTheme:theme=>set({theme}),setCommandOpen:commandOpen=>set({commandOpen}),setNotificationsOpen:notificationsOpen=>set({notificationsOpen})}),{name:'careeros-ui',partialize:s=>({sidebarCollapsed:s.sidebarCollapsed,theme:s.theme})}));

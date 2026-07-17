@@ -36,8 +36,10 @@ for (const row of rows) {
       careerUrl: careerUrl(row),
       atsType: row.ats,
       priority: row.tier >= 9 ? 'HIGH' : 'MEDIUM',
-      enabled: true,
+      enabled: row.ats !== 'OTHER',
       atsIdentifier: row.identifier || undefined,
+      providerType: row.ats !== 'OTHER' ? row.ats : undefined,
+      fallbackProviders: [],
     }),
   })
   companies.set(row.name.toLowerCase(), company)

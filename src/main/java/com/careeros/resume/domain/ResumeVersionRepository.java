@@ -1,0 +1,1 @@
+package com.careeros.resume.domain;import org.springframework.data.domain.*;import java.util.*;public interface ResumeVersionRepository{ResumeVersion save(ResumeVersion v);Optional<ResumeVersion>findById(UUID id);Page<ResumeVersion>findAll(Pageable p);List<ResumeVersion>findByJobId(UUID id);int nextVersion();void delete(ResumeVersion v);}

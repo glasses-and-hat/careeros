@@ -1,0 +1,1 @@
+package com.careeros.documents.application;import java.nio.file.Path;import java.util.List;public interface ResumeDocumentPort{Extracted extract(Path source);Path generate(Path source,Path target,List<String>bullets);record Extracted(String text,List<String>bullets){} }

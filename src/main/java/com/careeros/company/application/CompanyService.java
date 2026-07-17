@@ -28,6 +28,7 @@ public class CompanyService {
     }
 
     public Company create(CompanyCommand command) {
+        requireProviderWhenEnabled(command);
         if (companyRepository.existsByNameIgnoreCase(command.name())) {
             throw new DuplicateResourceException("A company named '%s' already exists".formatted(command.name()));
         }
@@ -40,6 +41,7 @@ public class CompanyService {
     }
 
     public Company update(UUID id, CompanyCommand command) {
+        requireProviderWhenEnabled(command);
         Company company = getOrThrow(id);
         company.updateDetails(command.name(), command.careerUrl(), command.atsType(), command.priority(),
                 command.atsIdentifier());
@@ -51,6 +53,13 @@ public class CompanyService {
             company.disable();
         }
         return companyRepository.save(company);
+    }
+
+    private static void requireProviderWhenEnabled(CompanyCommand command) {
+        if (command.enabled() && command.atsType() == com.careeros.company.domain.AtsType.OTHER
+                && command.providerType() == null) {
+            throw new IllegalArgumentException("An enabled company requires a monitoring provider");
+        }
     }
 
     @Transactional(readOnly = true)

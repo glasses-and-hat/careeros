@@ -13,8 +13,15 @@ RUN ./mvnw -q -B package -DskipTests
 FROM eclipse-temurin:21-jre-alpine
 WORKDIR /app
 
-RUN addgroup -S careeros && adduser -S careeros -G careeros
+RUN apk add --no-cache python3 py3-pip libreoffice \
+    && python3 -m venv /opt/careeros-venv \
+    && /opt/careeros-venv/bin/pip install --no-cache-dir python-docx==1.2.0 \
+    && addgroup -S careeros \
+    && adduser -S careeros -G careeros
+ENV PATH="/opt/careeros-venv/bin:${PATH}"
 COPY --from=build /workspace/target/careeros.jar app.jar
+COPY scripts/resume_docx.py scripts/resume_docx.py
+RUN mkdir -p /data/resumes && chown -R careeros:careeros /data /app/scripts
 USER careeros
 
 EXPOSE 8080

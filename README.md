@@ -170,6 +170,49 @@ Hibernate `ddl-auto` is `none`. Add new migrations as
 | `V4` | Adds nullable `ats_identifier` column to `companies` |
 | `V5` | Job discovery, applications, watchlists, searches, and reminders |
 | `V6` | Provider configuration, fallback chains, sync history, and health metrics |
+| `V7` | US-only job preference |
+| `V8` | Versioned resume artifacts and application linkage |
+| `V9` | Disables legacy companies that have no monitoring provider configured |
+| `V10` | Repairs Confluent's provider and disables known-stale catalog integrations |
+
+## Local AI resume tailoring
+
+CareerOS can tailor an existing master DOCX for a discovered job without
+sending resume data to a cloud provider. Ollama performs structured local
+generation, `python-docx` preserves the source document, grounding validation
+rejects unknown technologies and metrics, and LibreOffice creates the PDF.
+
+```bash
+brew install ollama
+brew services start ollama
+ollama pull llama3.1:8b
+ollama pull mistral:7b
+ollama pull nomic-embed-text
+brew install --cask libreoffice
+
+# Uses the Python selected by pyenv without modifying Homebrew Python.
+python3 -m venv .venv
+source .venv/bin/activate
+python -m pip install --upgrade pip
+python -m pip install python-docx
+
+export MASTER_RESUME_PATH=/absolute/path/to/master-resume.docx
+export RESUME_OUTPUT_DIRECTORY=/absolute/path/to/careeros-resumes
+export PYTHON_PATH="$PWD/.venv/bin/python"
+./mvnw spring-boot:run
+```
+
+For Docker Compose, place the immutable master at
+`data/master-resume.docx`. Generated artifacts are written to `data/resumes`.
+Ollama remains on the host and is reached through `host.docker.internal`.
+
+Configuration: `OLLAMA_BASE_URL`, `OLLAMA_PRIMARY_MODEL`,
+`OLLAMA_FAST_MODEL`, `OLLAMA_EMBED_MODEL`, `MASTER_RESUME_PATH`,
+`RESUME_OUTPUT_DIRECTORY`, and `LIBREOFFICE_PATH`.
+
+Open a job and select **Generate Tailored Resume**, or browse `/resumes` to
+compare, download, archive, and restore versions. Diagnostics are available at
+`GET /api/resumes/health`. The master resume is read-only and never overwritten.
 
 ## Frontend application
 
@@ -185,7 +228,8 @@ npm run dev
 ```
 
 Vite serves the application at `http://localhost:5173` and proxies `/api`
-requests to `http://localhost:8080`. Create a production bundle with
+requests to `http://localhost:8080`. The `/resumes` route provides the local
+resume library. Create a production bundle with
 `npm run build`; preview it with `npm run preview`.
 
 ### Frontend architecture

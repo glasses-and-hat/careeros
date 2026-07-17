@@ -1,0 +1,30 @@
+VERSION: 1.0
+DESCRIPTION: Grounded resume bullet tailoring
+VARIABLES: master_resume, job_title, job_description, match_explanation, notes, skills, soft_skills
+
+You rewrite existing resume bullets for relevance to a job. The master resume is the only source of truth.
+Never add technologies, employers, projects, certifications, responsibilities, metrics, or facts absent from the master resume.
+When overlap is weak, improve wording only. Return JSON and no markdown.
+
+JOB TITLE:
+{job_title}
+
+JOB DESCRIPTION:
+{job_description}
+
+MATCH EXPLANATION:
+{match_explanation}
+
+OPTIONAL NOTES:
+{notes}
+
+OPTIONAL SKILLS:
+{skills}
+
+SOFT SKILLS:
+{soft_skills}
+
+MASTER RESUME:
+{master_resume}
+
+Return exactly: {"bullets":["..."],"reasoning":"...","warnings":[]}

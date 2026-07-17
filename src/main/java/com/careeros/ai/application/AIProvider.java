@@ -1,0 +1,1 @@
+package com.careeros.ai.application;import java.util.*;public interface AIProvider{String name();boolean healthy();List<String>models();Generation generateJson(String model,String prompt);List<Double>embed(String model,String text);record Generation(List<String>bullets,String reasoning,List<String>warnings){} }

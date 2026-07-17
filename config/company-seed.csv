@@ -1,36 +1,36 @@
 name,ats,identifier,tier,categories
 Stripe,GREENHOUSE,stripe,10,Dream Companies;FinTech
 Datadog,GREENHOUSE,datadog,10,Dream Companies;Infrastructure & Cloud
-Snowflake,GREENHOUSE,snowflakecomputing,10,Dream Companies;Infrastructure & Cloud
-Confluent,GREENHOUSE,confluent,10,Dream Companies;Infrastructure & Cloud
+Snowflake,OTHER,,10,Dream Companies;Infrastructure & Cloud
+Confluent,ASHBY,confluent,10,Dream Companies;Infrastructure & Cloud
 Cloudflare,GREENHOUSE,cloudflare,10,Dream Companies;Infrastructure & Cloud
 Airbnb,GREENHOUSE,airbnb,10,Dream Companies
-Uber,GREENHOUSE,uber,10,Dream Companies
+Uber,OTHER,,10,Dream Companies
 Google,OTHER,,10,Dream Companies;Large Tech
 Meta,OTHER,,10,Dream Companies;Large Tech
 Netflix,OTHER,,10,Dream Companies
 OpenAI,ASHBY,openai,10,Dream Companies;AI Companies
-Anthropic,ASHBY,anthropic,10,Dream Companies;AI Companies
+Anthropic,OTHER,,10,Dream Companies;AI Companies
 Figma,GREENHOUSE,figma,10,Dream Companies;Developer Tools
 Notion,ASHBY,notion,10,Dream Companies;Developer Tools
 Vercel,ASHBY,vercel,10,Dream Companies;Developer Tools
 MongoDB,GREENHOUSE,mongodb,9,Excellent Product Companies;Infrastructure & Cloud
 Elastic,GREENHOUSE,elastic,9,Excellent Product Companies;Infrastructure & Cloud
 Okta,GREENHOUSE,okta,9,Excellent Product Companies;Infrastructure & Cloud
-HashiCorp,GREENHOUSE,hashicorp,9,Excellent Product Companies;Infrastructure & Cloud;Developer Tools
+HashiCorp,OTHER,,9,Excellent Product Companies;Infrastructure & Cloud;Developer Tools
 GitLab,GREENHOUSE,gitlab,9,Excellent Product Companies;Developer Tools
 GitHub,OTHER,,9,Excellent Product Companies;Developer Tools
 Twilio,GREENHOUSE,twilio,9,Excellent Product Companies
 Dropbox,GREENHOUSE,dropbox,9,Excellent Product Companies
-Atlassian,GREENHOUSE,atlassian,9,Excellent Product Companies;Developer Tools
+Atlassian,OTHER,,9,Excellent Product Companies;Developer Tools
 HubSpot,GREENHOUSE,hubspotjobs,9,Excellent Product Companies
-Canva,ASHBY,canva,9,Excellent Product Companies
+Canva,OTHER,,9,Excellent Product Companies
 Ramp,ASHBY,ramp,9,Excellent Product Companies;FinTech
-Rippling,LEVER,rippling,9,Excellent Product Companies
+Rippling,OTHER,,9,Excellent Product Companies
 Mercury,ASHBY,mercury,9,Excellent Product Companies;FinTech
-Plaid,GREENHOUSE,plaid,9,Excellent Product Companies;FinTech
+Plaid,OTHER,,9,Excellent Product Companies;FinTech
 Cockroach Labs,GREENHOUSE,cockroachlabs,9,Excellent Product Companies;Infrastructure & Cloud
-Redis,GREENHOUSE,redis,9,Excellent Product Companies;Infrastructure & Cloud
+Redis,OTHER,,9,Excellent Product Companies;Infrastructure & Cloud
 Grafana Labs,GREENHOUSE,grafanalabs,9,Excellent Product Companies;Developer Tools
 Sentry,ASHBY,sentry,9,Excellent Product Companies;Developer Tools
 LaunchDarkly,GREENHOUSE,launchdarkly,9,Excellent Product Companies;Developer Tools

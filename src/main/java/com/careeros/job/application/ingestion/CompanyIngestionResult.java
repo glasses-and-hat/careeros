@@ -22,8 +22,8 @@ public record CompanyIngestionResult(
 ) {
 
     static CompanyIngestionResult unsupportedAtsType(Company company) {
-        return new CompanyIngestionResult(company.getId(), company.getName(), company.getAtsType(), 0, 0, 0,
-                List.of("no connector registered for ats type " + company.getAtsType()));
+        return new CompanyIngestionResult(company.getId(), company.getName(), company.getAtsType(), 0, 0, 1,
+                List.of("monitoring provider is not configured for " + company.getName()));
     }
 
     static CompanyIngestionResult fetchFailed(Company company, String message) {

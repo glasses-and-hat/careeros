@@ -72,6 +72,19 @@ logging:
     console: "%d{yyyy-MM-dd HH:mm:ss.SSS} %-5level [%thread] %logger{36} - %msg%n"
 
 careeros:
+  ai:
+    ollama:
+      base-url: ${OLLAMA_BASE_URL:http://localhost:11434}
+      primary-model: ${OLLAMA_PRIMARY_MODEL:llama3.1:8b}
+      fast-model: ${OLLAMA_FAST_MODEL:mistral:7b}
+      embedding-model: ${OLLAMA_EMBED_MODEL:nomic-embed-text}
+      timeout: ${OLLAMA_REQUEST_TIMEOUT:2m}
+  resume:
+    master-path: ${MASTER_RESUME_PATH:}
+    output-directory: ${RESUME_OUTPUT_DIRECTORY:./data/resumes}
+    libre-office-path: ${LIBREOFFICE_PATH:}
+    python-path: ${PYTHON_PATH:python3}
+    process-timeout: ${RESUME_PROCESS_TIMEOUT:60s}
   matching:
     weights:
       role: 30

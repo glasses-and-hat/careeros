@@ -49,6 +49,18 @@ paths:
     post: {operationId: createSavedSearch,tags: [SavedSearches],requestBody: {required: true,content: {application/json: {schema: {$ref: '#/components/schemas/SavedSearchRequest'}}}},responses: {'200': {description: Created,content: {application/json: {schema: {$ref: '#/components/schemas/SavedSearch'}}}}}}
   /api/saved-searches/{id}/execute:
     post: {operationId: executeSavedSearch,tags: [SavedSearches],parameters: [{name: id,in: path,required: true,schema: {type: string,format: uuid}}],responses: {'200': {description: Results,content: {application/json: {schema: {$ref: '#/components/schemas/JobPostingPage'}}}}}}
+  /api/resumes:
+    get: {operationId: listResumes,tags: [Resumes],parameters: [{name: page,in: query,schema: {type: integer}},{name: size,in: query,schema: {type: integer}}],responses: {'200': {description: Resume versions,content: {application/json: {schema: {$ref: '#/components/schemas/ResumePage'}}}}}}
+  /api/resumes/generate:
+    post: {operationId: generateResume,tags: [Resumes],requestBody: {required: true,content: {application/json: {schema: {$ref: '#/components/schemas/GenerateResumeRequest'}}}},responses: {'201': {description: Generated,content: {application/json: {schema: {$ref: '#/components/schemas/ResumeVersion'}}}}}}
+  /api/resumes/job/{jobId}:
+    get: {operationId: getJobResumeHistory,tags: [Resumes],parameters: [{name: jobId,in: path,required: true,schema: {type: string,format: uuid}}],responses: {'200': {description: History,content: {application/json: {schema: {type: array,items: {$ref: '#/components/schemas/ResumeVersion'}}}}}}}
+  /api/resumes/{id}:
+    delete: {operationId: archiveResume,tags: [Resumes],parameters: [{name: id,in: path,required: true,schema: {type: string,format: uuid}}],responses: {'204': {description: Archived}}}
+  /api/resumes/{id}/restore:
+    post: {operationId: restoreResume,tags: [Resumes],parameters: [{name: id,in: path,required: true,schema: {type: string,format: uuid}}],responses: {'200': {description: Restored,content: {application/json: {schema: {$ref: '#/components/schemas/ResumeVersion'}}}}}}
+  /api/resumes/health:
+    get: {operationId: getResumeHealth,tags: [Resumes],responses: {'200': {description: Local AI health,content: {application/json: {schema: {$ref: '#/components/schemas/ResumeHealth'}}}}}}
 components:
   schemas:
     Page: {type: object,properties: {page: {type: integer},size: {type: integer},totalElements: {type: integer,format: int64},totalPages: {type: integer},last: {type: boolean}}}
@@ -77,3 +89,7 @@ components:
     SavedSearchRequest: {type: object,required: [name],properties: {name: {type: string},title: {type: string},sorting: {type: string},minimumScore: {type: integer},remote: {type: boolean},companies: {type: array,items: {type: string,format: uuid}},locations: {type: array,items: {type: string}},technologies: {type: array,items: {type: string}}}}
     SavedSearch: {allOf: [{$ref: '#/components/schemas/SavedSearchRequest'},{type: object,properties: {id: {type: string,format: uuid}}}]}
     SavedSearchPage: {allOf: [{$ref: '#/components/schemas/Page'},{type: object,properties: {content: {type: array,items: {$ref: '#/components/schemas/SavedSearch'}}}}]}
+    GenerateResumeRequest: {type: object,required: [jobId],properties: {jobId: {type: string,format: uuid},applicationId: {type: string,format: uuid},model: {type: string},notes: {type: string},skills: {type: array,items: {type: string}},softSkills: {type: array,items: {type: string}},matchExplanation: {type: string}}}
+    ResumeVersion: {type: object,required: [id,versionNumber,status,promptVersion,pdfGenerated,archived],properties: {id: {type: string,format: uuid},versionNumber: {type: integer},status: {type: string},jobId: {type: string,format: uuid},jobTitle: {type: string},applicationId: {type: string,format: uuid},modelUsed: {type: string},promptVersion: {type: string},generationDurationMs: {type: integer,format: int64},validationResult: {type: string},validationWarnings: {type: array,items: {type: string}},generatedBullets: {type: array,items: {type: string}},pdfGenerated: {type: boolean},archived: {type: boolean},createdAt: {type: string,format: date-time}}}
+    ResumePage: {allOf: [{$ref: '#/components/schemas/Page'},{type: object,properties: {content: {type: array,items: {$ref: '#/components/schemas/ResumeVersion'}}}}]}
+    ResumeHealth: {type: object,required: [provider,healthy,models,privacy],properties: {provider: {type: string},healthy: {type: boolean},models: {type: array,items: {type: string}},privacy: {type: string}}}

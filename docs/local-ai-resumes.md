@@ -8,7 +8,9 @@
    structured JSON from local Ollama.
 4. Grounding validation rejects technologies and metrics absent from the
    master. One retry is allowed; the safe fallback retains original bullets.
-5. A copied DOCX and optional PDF are stored as a numbered version.
+5. A copied DOCX and optional PDF are stored under
+   `<company>/<date>/<job-id>/v####/<name>.{docx,pdf}` so every generation is
+   readable and prior versions cannot be overwritten.
 6. Review validation warnings, download artifacts, compare versions, and
    optionally link generation to an application.
 

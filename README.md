@@ -198,17 +198,19 @@ python -m pip install python-docx
 
 export MASTER_RESUME_PATH=/absolute/path/to/master-resume.docx
 export RESUME_OUTPUT_DIRECTORY=/absolute/path/to/careeros-resumes
+export RESUME_FILE_BASENAME=Rahul_Yellapragada
 export PYTHON_PATH="$PWD/.venv/bin/python"
 ./mvnw spring-boot:run
 ```
 
 For Docker Compose, place the immutable master at
-`data/master-resume.docx`. Generated artifacts are written to `data/resumes`.
+`data/master-resume.docx`. Generated artifacts use readable, version-safe paths:
+`data/resumes/<company>/<date>/<job-id>/v####/<name>.{docx,pdf}`.
 Ollama remains on the host and is reached through `host.docker.internal`.
 
 Configuration: `OLLAMA_BASE_URL`, `OLLAMA_PRIMARY_MODEL`,
 `OLLAMA_FAST_MODEL`, `OLLAMA_EMBED_MODEL`, `MASTER_RESUME_PATH`,
-`RESUME_OUTPUT_DIRECTORY`, and `LIBREOFFICE_PATH`.
+`RESUME_OUTPUT_DIRECTORY`, `RESUME_FILE_BASENAME`, and `LIBREOFFICE_PATH`.
 
 Open a job and select **Generate Tailored Resume**, or browse `/resumes` to
 compare, download, archive, and restore versions. Diagnostics are available at

@@ -50,7 +50,7 @@ public class JobPosting extends AuditableEntity {
     @Column(name = "title", nullable = false)
     private String title;
 
-    @Column(name = "location")
+    @Column(name = "location", columnDefinition = "TEXT")
     private String location;
 
     @Enumerated(EnumType.STRING)

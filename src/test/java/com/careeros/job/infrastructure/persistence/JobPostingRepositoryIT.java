@@ -59,6 +59,28 @@ class JobPostingRepositoryIT extends AbstractPostgresIntegrationTest {
     }
 
     @Test
+    void persistsProviderLocationListsLongerThan255Characters() {
+        Company company = persistedCompany();
+        String location = "Atlanta, Georgia, USA; Austin, Texas, USA; Boise, Idaho, USA; "
+                + "Charleston, South Carolina, USA; Chicago, Illinois, USA; Cleveland, Ohio, USA; "
+                + "Columbia, South Carolina, USA; Columbus, Ohio, USA; Dallas, Texas, USA; "
+                + "Denver, Colorado, USA; Detroit, Michigan, USA; Houston, Texas, USA; "
+                + "Las Vegas, Nevada, USA; Orlando, Florida, USA; Pittsburgh, Pennsylvania, USA; "
+                + "Portland, Oregon, USA; Salt Lake City, Utah, USA";
+        JobPosting posting = JobPosting.create("job-long-location", company,
+                "Senior Technical Program Manager", location, EmploymentType.FULL_TIME, false,
+                SalaryRange.undisclosed(), "Great job", LocalDate.now(),
+                "https://acme.example/apply/job-long-location");
+
+        JobPosting saved = jobPostingRepository.saveAndFlush(posting);
+        entityManagerClear();
+
+        assertThat(jobPostingRepository.findById(saved.getId()).orElseThrow().getLocation())
+                .isEqualTo(location)
+                .hasSizeGreaterThan(255);
+    }
+
+    @Test
     void reloadedJobPostingNeverExposesNullSalary() {
         // Regression test: when every salary column is NULL, Hibernate maps the
         // embeddable itself to null rather than an all-null instance. JobPosting

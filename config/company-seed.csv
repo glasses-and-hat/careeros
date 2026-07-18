@@ -1,7 +1,7 @@
 name,ats,identifier,tier,categories
 Stripe,GREENHOUSE,stripe,10,Dream Companies;FinTech
 Datadog,GREENHOUSE,datadog,10,Dream Companies;Infrastructure & Cloud
-Snowflake,OTHER,,10,Dream Companies;Infrastructure & Cloud
+Snowflake,ASHBY,snowflake,10,Dream Companies;Infrastructure & Cloud
 Confluent,ASHBY,confluent,10,Dream Companies;Infrastructure & Cloud
 Cloudflare,GREENHOUSE,cloudflare,10,Dream Companies;Infrastructure & Cloud
 Airbnb,GREENHOUSE,airbnb,10,Dream Companies
@@ -10,7 +10,7 @@ Google,OTHER,,10,Dream Companies;Large Tech
 Meta,OTHER,,10,Dream Companies;Large Tech
 Netflix,OTHER,,10,Dream Companies
 OpenAI,ASHBY,openai,10,Dream Companies;AI Companies
-Anthropic,OTHER,,10,Dream Companies;AI Companies
+Anthropic,GREENHOUSE,anthropic,10,Dream Companies;AI Companies
 Figma,GREENHOUSE,figma,10,Dream Companies;Developer Tools
 Notion,ASHBY,notion,10,Dream Companies;Developer Tools
 Vercel,ASHBY,vercel,10,Dream Companies;Developer Tools
@@ -28,7 +28,7 @@ Canva,OTHER,,9,Excellent Product Companies
 Ramp,ASHBY,ramp,9,Excellent Product Companies;FinTech
 Rippling,OTHER,,9,Excellent Product Companies
 Mercury,ASHBY,mercury,9,Excellent Product Companies;FinTech
-Plaid,OTHER,,9,Excellent Product Companies;FinTech
+Plaid,ASHBY,plaid,9,Excellent Product Companies;FinTech
 Cockroach Labs,GREENHOUSE,cockroachlabs,9,Excellent Product Companies;Infrastructure & Cloud
 Redis,OTHER,,9,Excellent Product Companies;Infrastructure & Cloud
 Grafana Labs,GREENHOUSE,grafanalabs,9,Excellent Product Companies;Developer Tools
@@ -47,56 +47,56 @@ Nutanix,OTHER,,7,Infrastructure & Cloud
 Pure Storage,OTHER,,7,Infrastructure & Cloud
 Rubrik,OTHER,,7,Infrastructure & Cloud
 Cohesity,OTHER,,7,Infrastructure & Cloud
-Postman,OTHER,,7,Developer Tools
+Postman,GREENHOUSE,postman,7,Developer Tools
 Docker,OTHER,,7,Developer Tools
 JetBrains,OTHER,,7,Developer Tools
-CircleCI,OTHER,,7,Developer Tools
-Harness,OTHER,,7,Developer Tools
+CircleCI,GREENHOUSE,circleci,7,Developer Tools
+Harness,GREENHOUSE,harnessinc,7,Developer Tools
 Sonar,OTHER,,7,Developer Tools
 Gradle,OTHER,,7,Developer Tools
-Temporal,OTHER,,7,Developer Tools
+Temporal,GREENHOUSE,temporaltechnologies,7,Developer Tools
 Kong,OTHER,,7,Developer Tools
-New Relic,OTHER,,7,Developer Tools
+New Relic,GREENHOUSE,newrelic,7,Developer Tools
 Splunk,OTHER,,7,Developer Tools
 Dynatrace,OTHER,,7,Developer Tools
-Block (Square),OTHER,,7,FinTech
+Block (Square),GREENHOUSE,block,7,FinTech
 PayPal,OTHER,,7,FinTech
 Adyen,OTHER,,7,FinTech
 Wise,OTHER,,7,FinTech
-Brex,OTHER,,7,FinTech
+Brex,GREENHOUSE,brex,7,FinTech
 Chime,OTHER,,7,FinTech
-Robinhood,OTHER,,7,FinTech
+Robinhood,GREENHOUSE,robinhood,7,FinTech
 SoFi,OTHER,,7,FinTech
-Coinbase,OTHER,,7,FinTech
-Affirm,OTHER,,7,FinTech
+Coinbase,GREENHOUSE,coinbase,7,FinTech
+Affirm,GREENHOUSE,affirm,7,FinTech
 Checkout.com,OTHER,,7,FinTech
 Marqeta,OTHER,,7,FinTech
 Bill,OTHER,,7,FinTech
 Bilt Rewards,OTHER,,7,FinTech
 Cohere,OTHER,,7,AI Companies
-Perplexity,OTHER,,7,AI Companies
-Scale AI,OTHER,,7,AI Companies
-Glean,OTHER,,7,AI Companies
+Perplexity,ASHBY,perplexity,7,AI Companies
+Scale AI,GREENHOUSE,scaleai,7,AI Companies
+Glean,GREENHOUSE,gleanwork,7,AI Companies
 Sierra,OTHER,,7,AI Companies
 Cursor (Anysphere),OTHER,,7,AI Companies;Developer Tools
-Together AI,OTHER,,7,AI Companies
+Together AI,GREENHOUSE,togetherai,7,AI Companies
 Weights & Biases,OTHER,,7,AI Companies;Developer Tools
-Modal,OTHER,,7,AI Companies
+Modal,ASHBY,modal,7,AI Companies
 Runway,OTHER,,7,AI Companies
-ElevenLabs,OTHER,,7,AI Companies
+ElevenLabs,ASHBY,elevenlabs,7,AI Companies
 Motorola Solutions,OTHER,,7,Chicago Area
 Discover,OTHER,,7,Chicago Area;FinTech
 CME Group,OTHER,,7,Chicago Area;FinTech
 Morningstar,OTHER,,7,Chicago Area;FinTech
-Relativity,OTHER,,7,Chicago Area
+Relativity,GREENHOUSE,relativity,7,Chicago Area
 ActiveCampaign,OTHER,,7,Chicago Area
 Tempus AI,OTHER,,7,Chicago Area;AI Companies
 Kin Insurance,OTHER,,7,Chicago Area;FinTech
 CCC Intelligent Solutions,OTHER,,7,Chicago Area
-project44,OTHER,,7,Chicago Area
-DRW,OTHER,,7,Chicago Area;FinTech
+project44,GREENHOUSE,project44,7,Chicago Area
+DRW,GREENHOUSE,drweng,7,Chicago Area;FinTech
 Jump Trading,OTHER,,7,Chicago Area;FinTech
-IMC Trading,OTHER,,7,Chicago Area;FinTech
+IMC Trading,GREENHOUSE,imc,7,Chicago Area;FinTech
 Hudson River Trading,OTHER,,7,Chicago Area;FinTech
 NinjaTrader,OTHER,,7,Chicago Area;FinTech
 Braintree (PayPal),OTHER,,7,Chicago Area;FinTech
@@ -113,16 +113,16 @@ IBM,OTHER,,7,Large Tech
 NVIDIA,OTHER,,7,Large Tech;AI Companies
 Retool,OTHER,,7,High-Growth Startups;Developer Tools
 Vanta,OTHER,,7,High-Growth Startups
-ClickHouse,OTHER,,7,High-Growth Startups;Infrastructure & Cloud
-Supabase,OTHER,,7,High-Growth Startups;Developer Tools
+ClickHouse,GREENHOUSE,clickhouse,7,High-Growth Startups;Infrastructure & Cloud
+Supabase,ASHBY,supabase,7,High-Growth Startups;Developer Tools
 Neon,OTHER,,7,High-Growth Startups;Infrastructure & Cloud
 PlanetScale,OTHER,,7,High-Growth Startups;Infrastructure & Cloud
 Warp,OTHER,,7,High-Growth Startups;Developer Tools
-Linear,OTHER,,7,High-Growth Startups;Developer Tools
+Linear,ASHBY,linear,7,High-Growth Startups;Developer Tools
 Render,OTHER,,7,High-Growth Startups;Infrastructure & Cloud
-Railway,OTHER,,7,High-Growth Startups;Infrastructure & Cloud
+Railway,ASHBY,railway,7,High-Growth Startups;Infrastructure & Cloud
 Clerk,OTHER,,7,High-Growth Startups;Developer Tools
 Convex,OTHER,,7,High-Growth Startups;Developer Tools
 Pulumi,OTHER,,7,High-Growth Startups;Infrastructure & Cloud;Developer Tools
-Tailscale,OTHER,,7,High-Growth Startups;Infrastructure & Cloud
-Orb,OTHER,,7,High-Growth Startups;FinTech
+Tailscale,GREENHOUSE,tailscale,7,High-Growth Startups;Infrastructure & Cloud
+Orb,ASHBY,orb,7,High-Growth Startups;FinTech

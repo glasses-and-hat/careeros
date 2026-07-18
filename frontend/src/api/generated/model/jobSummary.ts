@@ -12,6 +12,7 @@ export interface JobSummary {
   location?: string;
   remote: boolean;
   postedDate?: string;
+  applyUrl: string;
   overallScore: number;
   roleScore?: number;
   technologyScore?: number;

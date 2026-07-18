@@ -40,6 +40,7 @@ services:
       OLLAMA_EMBED_MODEL: ${OLLAMA_EMBED_MODEL:-nomic-embed-text}
       MASTER_RESUME_PATH: ${MASTER_RESUME_PATH:-/data/master-resume.docx}
       RESUME_OUTPUT_DIRECTORY: ${RESUME_OUTPUT_DIRECTORY:-/data/resumes}
+      RESUME_FILE_BASENAME: ${RESUME_FILE_BASENAME:-Rahul_Yellapragada}
       LIBREOFFICE_PATH: ${LIBREOFFICE_PATH:-/usr/bin/soffice}
     volumes:
       - ./data:/data

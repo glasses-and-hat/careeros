@@ -3,16 +3,43 @@ import argparse, json, shutil, sys
 from pathlib import Path
 from docx import Document
 
-def extract(path):
-    doc=Document(path); blocks=[]
-    blocks.extend(p.text.strip() for p in doc.paragraphs if p.text.strip())
+def paragraphs(doc):
+    """Yield body and table paragraphs once, including merged table cells."""
+    seen = set()
+    for paragraph in doc.paragraphs:
+        seen.add(id(paragraph._p))
+        yield paragraph
     for table in doc.tables:
         for row in table.rows:
-            blocks.extend(cell.text.strip() for cell in row.cells if cell.text.strip())
-    print(json.dumps({'text':'\n'.join(blocks),'bullets':[p.text.strip() for p in doc.paragraphs if p.text.strip() and ('list' in p.style.name.lower() or p.text.lstrip().startswith(('•','-')))]}))
+            for cell in row.cells:
+                for paragraph in cell.paragraphs:
+                    key = id(paragraph._p)
+                    if key not in seen:
+                        seen.add(key)
+                        yield paragraph
+
+def is_bullet(paragraph):
+    text = paragraph.text.strip()
+    properties = paragraph._p.pPr
+    has_numbering = properties is not None and properties.numPr is not None
+    return bool(text) and (
+        has_numbering
+        or 'list' in paragraph.style.name.lower()
+        or text.lstrip().startswith(('•', '-'))
+    )
+
+def extract(path):
+    doc = Document(path)
+    content = list(paragraphs(doc))
+    print(json.dumps({
+        'text': '\n'.join(p.text.strip() for p in content if p.text.strip()),
+        'bullets': [p.text.strip() for p in content if is_bullet(p)],
+    }))
 
 def generate(source,target,bullets):
-    shutil.copy2(source,target); doc=Document(target); candidates=[p for p in doc.paragraphs if p.text.strip() and ('list' in p.style.name.lower() or p.text.lstrip().startswith(('•','-')))]
+    shutil.copy2(source,target)
+    doc = Document(target)
+    candidates = [p for p in paragraphs(doc) if is_bullet(p)]
     if not candidates: raise RuntimeError('No bullet paragraphs found in master resume')
     for paragraph,value in zip(candidates,bullets):
         if paragraph.runs:

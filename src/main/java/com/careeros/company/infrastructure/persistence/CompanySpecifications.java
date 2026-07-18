@@ -17,6 +17,7 @@ final class CompanySpecifications {
                 .where(nameContains(filter.name()))
                 .and(hasAtsType(filter.atsType()))
                 .and(hasPriority(filter.priority()))
+                .and(hasProviderType(filter.providerType()))
                 .and(isEnabled(filter.enabled()));
     }
 
@@ -39,6 +40,13 @@ final class CompanySpecifications {
             return null;
         }
         return (root, query, cb) -> cb.equal(root.get("priority"), priority);
+    }
+
+    private static Specification<Company> hasProviderType(com.careeros.provider.domain.ProviderType providerType) {
+        if (providerType == null) {
+            return null;
+        }
+        return (root, query, cb) -> cb.equal(root.get("providerType"), providerType);
     }
 
     private static Specification<Company> isEnabled(Boolean enabled) {

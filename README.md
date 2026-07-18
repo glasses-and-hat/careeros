@@ -174,6 +174,9 @@ Hibernate `ddl-auto` is `none`. Add new migrations as
 | `V8` | Versioned resume artifacts and application linkage |
 | `V9` | Disables legacy companies that have no monitoring provider configured |
 | `V10` | Repairs Confluent's provider and disables known-stale catalog integrations |
+| `V11` | Enables company providers verified against their public feeds |
+| `V12` | Expands multi-location job data beyond 255 characters |
+| `V13` | Enables Nvidia through its numbered Workday shard |
 
 ## Local AI resume tailoring
 

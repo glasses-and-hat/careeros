@@ -6,6 +6,7 @@ import com.careeros.company.domain.AtsType;
 import com.careeros.company.domain.Company;
 import com.careeros.company.domain.CompanyFilter;
 import com.careeros.company.domain.Priority;
+import com.careeros.provider.domain.ProviderType;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
@@ -60,9 +61,10 @@ public class CompanyController {
             @RequestParam(required = false) String name,
             @RequestParam(required = false) AtsType atsType,
             @RequestParam(required = false) Priority priority,
+            @RequestParam(required = false) ProviderType providerType,
             @RequestParam(required = false) Boolean enabled,
             @PageableDefault(size = 20, sort = "name") Pageable pageable) {
-        CompanyFilter filter = new CompanyFilter(name, atsType, priority, enabled);
+        CompanyFilter filter = new CompanyFilter(name, atsType, priority, providerType, enabled);
         return PageResponse.from(companyService.list(filter, pageable), CompanyMapper::toResponse);
     }
 

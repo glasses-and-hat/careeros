@@ -3,8 +3,8 @@ import { readFile } from 'node:fs/promises'
 const baseUrl = process.env.CAREEROS_API_URL ?? 'http://localhost:8080'
 const csv = await readFile(new URL('../config/company-seed.csv', import.meta.url), 'utf8')
 const rows = csv.trim().split(/\r?\n/).slice(1).map(line => {
-  const [name, ats, identifier, tier, categories] = line.split(',')
-  return { name, ats, identifier, tier: Number(tier), categories: categories.split(';') }
+  const [name, ats, identifier, tier, categories, providerHost] = line.split(',')
+  return { name, ats, identifier, tier: Number(tier), categories: categories.split(';'), providerHost }
 })
 
 async function request(path, options = {}) {
@@ -23,6 +23,10 @@ function careerUrl(row) {
   if (row.ats === 'GREENHOUSE') return `https://boards.greenhouse.io/${row.identifier}`
   if (row.ats === 'ASHBY') return `https://jobs.ashbyhq.com/${row.identifier}`
   if (row.ats === 'LEVER') return `https://jobs.lever.co/${row.identifier}`
+  if (row.ats === 'WORKDAY' && row.providerHost) {
+    const [, site] = row.identifier.split('/', 2)
+    return `https://${row.providerHost}/${site}`
+  }
   return `https://www.google.com/search?q=${encodeURIComponent(`${row.name} careers`)}`
 }
 
@@ -39,6 +43,7 @@ for (const row of rows) {
       enabled: row.ats !== 'OTHER',
       atsIdentifier: row.identifier || undefined,
       providerType: row.ats !== 'OTHER' ? row.ats : undefined,
+      providerConfiguration: row.providerHost ? JSON.stringify({ host: row.providerHost }) : undefined,
       fallbackProviders: [],
     }),
   })

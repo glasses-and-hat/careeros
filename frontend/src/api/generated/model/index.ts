@@ -35,6 +35,7 @@ export * from './jobPostingPageAllOf';
 export * from './jobSummary';
 export * from './listApplicationsParams';
 export * from './listCompaniesParams';
+export * from './listCompaniesPriority';
 export * from './listJobsParams';
 export * from './listResumesParams';
 export * from './listSavedSearchesParams';

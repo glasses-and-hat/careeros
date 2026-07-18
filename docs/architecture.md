@@ -60,6 +60,10 @@ changing the controller or matching domain contract.
 Ingestion is resolved by capability rather than scheduler branches. Existing
 ATS connectors and generic providers implement the same `JobProvider` port.
 The registry discovers implementations and rejects duplicate registrations.
+Workday companies normally use a `tenant/site` identifier. A numbered Workday
+shard can additionally provide `{"host":"tenant.wdN.myworkdayjobs.com"}` in
+the company provider configuration; the adapter validates that the host remains
+inside the configured Workday domain before making a request.
 
 ```mermaid
 flowchart LR

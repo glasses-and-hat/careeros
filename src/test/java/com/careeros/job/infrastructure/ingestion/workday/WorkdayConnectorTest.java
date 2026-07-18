@@ -5,7 +5,9 @@ import com.careeros.company.domain.Company;
 import com.careeros.company.domain.Priority;
 import com.careeros.config.IngestionProperties;
 import com.careeros.job.application.JobPostingCommand;
+import com.careeros.provider.domain.ProviderType;
 import com.careeros.support.TestFixtures;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.Test;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.MediaType;
@@ -48,7 +50,7 @@ class WorkdayConnectorTest {
                 .andRespond(withSuccess(TestFixtures.read("fixtures/ingestion/workday/sample-response.json"),
                         MediaType.APPLICATION_JSON));
 
-        WorkdayConnector connector = new WorkdayConnector(builder, properties());
+        WorkdayConnector connector = new WorkdayConnector(builder, properties(), new ObjectMapper());
         List<JobPostingCommand> commands = connector.fetchJobs(aCompany());
 
         assertThat(commands).hasSize(2);
@@ -77,9 +79,30 @@ class WorkdayConnectorTest {
         server.expect(requestTo(JOBS_URL))
                 .andRespond(withServerError());
 
-        WorkdayConnector connector = new WorkdayConnector(builder, properties());
+        WorkdayConnector connector = new WorkdayConnector(builder, properties(), new ObjectMapper());
 
         assertThatThrownBy(() -> connector.fetchJobs(aCompany()))
                 .isInstanceOf(HttpServerErrorException.class);
+    }
+
+    @Test
+    void usesConfiguredNumberedWorkdayHost() {
+        RestClient.Builder builder = RestClient.builder();
+        MockRestServiceServer server = MockRestServiceServer.bindTo(builder).build();
+        String url = "https://nvidia.wd5.myworkdayjobs.com/wday/cxs/nvidia/NVIDIAExternalCareerSite/jobs";
+        server.expect(requestTo(url)).andExpect(method(HttpMethod.POST)).andRespond(withSuccess(
+                TestFixtures.read("fixtures/ingestion/workday/sample-response.json"), MediaType.APPLICATION_JSON));
+        Company company = Company.create("NVIDIA", "https://nvidia.wd5.myworkdayjobs.com/"
+                        + "NVIDIAExternalCareerSite", AtsType.WORKDAY, Priority.HIGH, true,
+                "nvidia/NVIDIAExternalCareerSite");
+        company.configureProvider(ProviderType.WORKDAY,
+                "{\"host\":\"nvidia.wd5.myworkdayjobs.com\"}", List.of());
+
+        List<JobPostingCommand> commands = new WorkdayConnector(builder, properties(), new ObjectMapper())
+                .fetchJobs(company);
+
+        assertThat(commands).hasSize(2);
+        assertThat(commands.get(0).applyUrl()).startsWith("https://nvidia.wd5.myworkdayjobs.com/");
+        server.verify();
     }
 }

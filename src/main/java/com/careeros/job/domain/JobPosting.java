@@ -63,8 +63,7 @@ public class JobPosting extends AuditableEntity {
     @Embedded
     private SalaryRange salary;
 
-    @Lob
-    @Column(name = "description")
+    @Column(name = "description", columnDefinition = "TEXT")
     private String description;
 
     @Column(name = "posted_date")

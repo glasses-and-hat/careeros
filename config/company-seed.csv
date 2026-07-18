@@ -1,4 +1,4 @@
-name,ats,identifier,tier,categories
+name,ats,identifier,tier,categories,provider_host
 Stripe,GREENHOUSE,stripe,10,Dream Companies;FinTech
 Datadog,GREENHOUSE,datadog,10,Dream Companies;Infrastructure & Cloud
 Snowflake,ASHBY,snowflake,10,Dream Companies;Infrastructure & Cloud
@@ -110,7 +110,7 @@ ServiceNow,OTHER,,7,Large Tech
 Intuit,OTHER,,7,Large Tech;FinTech
 SAP,OTHER,,7,Large Tech
 IBM,OTHER,,7,Large Tech
-NVIDIA,OTHER,,7,Large Tech;AI Companies
+NVIDIA,WORKDAY,nvidia/NVIDIAExternalCareerSite,7,Large Tech;AI Companies,nvidia.wd5.myworkdayjobs.com
 Retool,OTHER,,7,High-Growth Startups;Developer Tools
 Vanta,OTHER,,7,High-Growth Startups
 ClickHouse,GREENHOUSE,clickhouse,7,High-Growth Startups;Infrastructure & Cloud

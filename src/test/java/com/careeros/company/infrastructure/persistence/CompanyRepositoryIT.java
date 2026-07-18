@@ -57,7 +57,8 @@ class CompanyRepositoryIT extends AbstractPostgresIntegrationTest {
         disabled.disable();
         companyRepository.save(disabled);
 
-        CompanyFilter filter = new CompanyFilter(null, AtsType.GREENHOUSE, null, true);
+        CompanyFilter filter = new CompanyFilter(null, AtsType.GREENHOUSE, null,
+                com.careeros.provider.domain.ProviderType.GREENHOUSE, true);
         Specification<Company> spec = CompanySpecifications.fromFilter(filter);
         Page<Company> result = companyRepository.findAll(spec, PageRequest.of(0, 10));
 

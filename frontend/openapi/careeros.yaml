@@ -20,12 +20,14 @@ paths:
       tags: [Jobs]
       parameters: [{name: page,in: query,schema: {type: integer}},{name: size,in: query,schema: {type: integer}},{name: title,in: query,schema: {type: string}},{name: location,in: query,schema: {type: string}},{name: remote,in: query,schema: {type: boolean}}]
       responses: {'200': {description: Jobs, content: {application/json: {schema: {$ref: '#/components/schemas/JobPostingPage'}}}}}
+  /api/v1/jobs/{id}:
+    get: {operationId: getJob,tags: [Jobs],parameters: [{name: id,in: path,required: true,schema: {type: string,format: uuid}}],responses: {'200': {description: Job details,content: {application/json: {schema: {$ref: '#/components/schemas/JobPosting'}}}}}}
   /api/v1/ingestion/runs:
     post: {operationId: runIngestion,tags: [Ingestion],responses: {'200': {description: Ingestion completed,content: {application/json: {schema: {$ref: '#/components/schemas/IngestionRun'}}}}}}
   /api/v1/ingestion/companies/{companyId}/runs:
     post: {operationId: runCompanyIngestion,tags: [Ingestion],parameters: [{name: companyId,in: path,required: true,schema: {type: string,format: uuid}}],responses: {'200': {description: Ingestion completed,content: {application/json: {schema: {$ref: '#/components/schemas/IngestionRun'}}}}}}
   /api/v1/companies:
-    get: {operationId: listCompanies,tags: [Companies],parameters: [{name: page,in: query,schema: {type: integer}},{name: size,in: query,schema: {type: integer}}],responses: {'200': {description: Companies,content: {application/json: {schema: {$ref: '#/components/schemas/CompanyPage'}}}}}}
+    get: {operationId: listCompanies,tags: [Companies],parameters: [{name: name,in: query,schema: {type: string}},{name: priority,in: query,schema: {type: string,enum: [HIGH,MEDIUM,LOW]}},{name: providerType,in: query,schema: {$ref: '#/components/schemas/ProviderType'}},{name: enabled,in: query,schema: {type: boolean}},{name: page,in: query,schema: {type: integer}},{name: size,in: query,schema: {type: integer}},{name: sort,in: query,schema: {type: string},description: 'Property and direction, for example name,asc'}],responses: {'200': {description: Companies,content: {application/json: {schema: {$ref: '#/components/schemas/CompanyPage'}}}}}}
     post: {operationId: createCompany,tags: [Companies],requestBody: {required: true,content: {application/json: {schema: {$ref: '#/components/schemas/CompanyRequest'}}}},responses: {'201': {description: Created,content: {application/json: {schema: {$ref: '#/components/schemas/Company'}}}}}}
   /api/v1/companies/{id}:
     put: {operationId: updateCompany,tags: [Companies],parameters: [{name: id,in: path,required: true,schema: {type: string,format: uuid}}],requestBody: {required: true,content: {application/json: {schema: {$ref: '#/components/schemas/CompanyRequest'}}}},responses: {'200': {description: Updated,content: {application/json: {schema: {$ref: '#/components/schemas/Company'}}}}}}

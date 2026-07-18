@@ -7,6 +7,7 @@ import com.careeros.job.application.JobPostingCommand;
 import com.careeros.job.application.ingestion.AtsConnector;
 import com.careeros.job.infrastructure.ingestion.support.EmploymentTypeParser;
 import com.careeros.job.infrastructure.ingestion.support.RemoteHeuristic;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import org.springframework.stereotype.Component;
 import org.springframework.web.client.RestClient;
 
@@ -21,10 +22,10 @@ import java.util.List;
  *
  * <p>Highest-risk connector of the 5: Workday tenants sometimes live on
  * numbered shard subdomains ({@code wd1.myworkdayjobs.com}) rather than the
- * bare host used here as the default (configurable via
- * {@code careeros.ingestion.workday-host-suffix}); a tenant that needs a
- * shard can encode it by extending {@code ats_identifier} later without a
- * schema change, since the column is a plain VARCHAR.
+ * bare host used by default. Those companies configure a public host through
+ * {@code provider_configuration}, for example
+ * {@code {"host":"nvidia.wd5.myworkdayjobs.com"}}. Hosts are restricted to
+ * the configured Workday domain suffix.
  *
  * <p>{@code postedOn} is a relative string ("Posted Today", "Posted 3 Days
  * Ago") rather than a real date, so {@code postedDate} is deliberately left
@@ -40,10 +41,13 @@ class WorkdayConnector implements AtsConnector {
 
     private final RestClient restClient;
     private final String hostSuffix;
+    private final ObjectMapper objectMapper;
 
-    WorkdayConnector(RestClient.Builder atsRestClientBuilder, IngestionProperties properties) {
+    WorkdayConnector(RestClient.Builder atsRestClientBuilder, IngestionProperties properties,
+                     ObjectMapper objectMapper) {
         this.restClient = atsRestClientBuilder.build();
         this.hostSuffix = properties.workdayHostSuffix();
+        this.objectMapper = objectMapper;
     }
 
     @Override
@@ -60,7 +64,7 @@ class WorkdayConnector implements AtsConnector {
         }
         String tenant = tenantAndSite[0];
         String site = tenantAndSite[1];
-        String baseHost = "https://" + tenant + "." + hostSuffix;
+        String baseHost = "https://" + configuredHost(company, tenant);
         String jobsUrl = baseHost + "/wday/cxs/" + tenant + "/" + site + "/jobs";
 
         List<JobPostingCommand> commands = new ArrayList<>();
@@ -82,6 +86,24 @@ class WorkdayConnector implements AtsConnector {
             offset += PAGE_SIZE;
         }
         return commands;
+    }
+
+    private String configuredHost(Company company, String tenant) {
+        String host = tenant + "." + hostSuffix;
+        if (company.getProviderConfiguration() != null && !company.getProviderConfiguration().isBlank()) {
+            try {
+                String configured = objectMapper.readTree(company.getProviderConfiguration()).path("host").asText();
+                if (!configured.isBlank()) host = configured;
+            } catch (Exception e) {
+                throw new IllegalStateException("Invalid Workday provider configuration", e);
+            }
+        }
+        String normalized = host.toLowerCase(java.util.Locale.ROOT);
+        if (!host.matches("[A-Za-z0-9.-]+")
+                || !(normalized.equals(hostSuffix) || normalized.endsWith("." + hostSuffix))) {
+            throw new IllegalStateException("Workday host must be within " + hostSuffix + ": " + host);
+        }
+        return host;
     }
 
     private JobPostingCommand toCommand(Company company, String baseHost, WorkdayJobPosting posting) {

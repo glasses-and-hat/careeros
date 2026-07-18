@@ -4,8 +4,18 @@
  * CareerOS API
  * OpenAPI spec version: 0.4.0
  */
+import type { ListCompaniesPriority } from './listCompaniesPriority';
+import type { ProviderType } from './providerType';
 
 export type ListCompaniesParams = {
+name?: string;
+priority?: ListCompaniesPriority;
+providerType?: ProviderType;
+enabled?: boolean;
 page?: number;
 size?: number;
+/**
+ * Property and direction, for example name,asc
+ */
+sort?: string;
 };

@@ -88,6 +88,27 @@ class JobPostingServiceTest {
     }
 
     @Test
+    void refreshesMutableFieldsWhenProviderReusesAnExternalId() {
+        UUID companyId = UUID.randomUUID();
+        JobPostingCommand original = aCommand(companyId);
+        JobPosting existing = JobPosting.create(original.externalId(), company, original.title(), original.location(),
+                original.employmentType(), original.remote(), null, original.description(), original.postedDate(), original.applyUrl());
+        JobPostingCommand refreshed = new JobPostingCommand(original.externalId(), companyId, "Staff Software Engineer - AI Products",
+                "US-CA-Menlo Park", EmploymentType.FULL_TIME, false, null, null, null, "Updated description",
+                original.postedDate().plusDays(2), original.applyUrl());
+        when(companyRepository.findById(companyId)).thenReturn(Optional.of(company));
+        when(jobPostingRepository.findByHash(any())).thenReturn(Optional.of(existing));
+        when(jobPostingRepository.save(existing)).thenReturn(existing);
+
+        var outcome = jobPostingService.synchronize(refreshed);
+
+        assertThat(outcome).isEqualTo(JobPostingService.SynchronizationOutcome.UPDATED);
+        assertThat(existing.getTitle()).isEqualTo("Staff Software Engineer - AI Products");
+        assertThat(existing.getDescription()).isEqualTo("Updated description");
+        verify(jobPostingRepository).save(existing);
+    }
+
+    @Test
     void throwsWhenJobPostingNotFoundOnGet() {
         UUID id = UUID.randomUUID();
         when(jobPostingRepository.findById(id)).thenReturn(Optional.empty());

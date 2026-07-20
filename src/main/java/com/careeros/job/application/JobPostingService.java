@@ -14,6 +14,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.UUID;
+import java.util.Objects;
 
 /**
  * Use cases for managing normalized job postings. Duplicate detection at
@@ -33,26 +34,32 @@ public class JobPostingService {
     }
 
     public JobPosting create(JobPostingCommand command) {
-        Company company = companyRepository.findById(command.companyId())
-                .orElseThrow(() -> ResourceNotFoundException.forId("Company", command.companyId()));
-
-        JobPosting jobPosting = JobPosting.create(
-                command.externalId(),
-                company,
-                command.title(),
-                command.location(),
-                command.employmentType(),
-                command.remote(),
-                new SalaryRange(command.salaryMin(), command.salaryMax(), command.salaryCurrency()),
-                command.description(),
-                command.postedDate(),
-                command.applyUrl());
+        JobPosting jobPosting = from(command);
 
         if (jobPostingRepository.existsByHash(jobPosting.getHash())) {
             throw new DuplicateResourceException(
-                    "Job posting '%s' from company '%s' already exists".formatted(command.externalId(), company.getName()));
+                    "Job posting '%s' from company '%s' already exists".formatted(command.externalId(), jobPosting.getCompany().getName()));
         }
         return jobPostingRepository.save(jobPosting);
+    }
+
+    /** Creates a newly discovered posting or refreshes mutable ATS fields on an existing one. */
+    public SynchronizationOutcome synchronize(JobPostingCommand command) {
+        JobPosting incoming = from(command);
+        var existing = jobPostingRepository.findByHash(incoming.getHash());
+        if (existing.isEmpty()) {
+            jobPostingRepository.save(incoming);
+            return SynchronizationOutcome.CREATED;
+        }
+        JobPosting current = existing.get();
+        if (sameDetails(current, command)) {
+            return SynchronizationOutcome.UNCHANGED;
+        }
+        current.updateDetails(command.title(), command.location(), command.employmentType(), command.remote(),
+                new SalaryRange(command.salaryMin(), command.salaryMax(), command.salaryCurrency()),
+                command.description(), command.postedDate(), command.applyUrl());
+        jobPostingRepository.save(current);
+        return SynchronizationOutcome.UPDATED;
     }
 
     public JobPosting update(UUID id, JobPostingCommand command) {
@@ -90,4 +97,26 @@ public class JobPostingService {
         return jobPostingRepository.findById(id)
                 .orElseThrow(() -> ResourceNotFoundException.forId("JobPosting", id));
     }
+
+    private JobPosting from(JobPostingCommand command) {
+        Company company = companyRepository.findById(command.companyId())
+                .orElseThrow(() -> ResourceNotFoundException.forId("Company", command.companyId()));
+        return JobPosting.create(command.externalId(), company, command.title(), command.location(),
+                command.employmentType(), command.remote(),
+                new SalaryRange(command.salaryMin(), command.salaryMax(), command.salaryCurrency()),
+                command.description(), command.postedDate(), command.applyUrl());
+    }
+
+    private boolean sameDetails(JobPosting current, JobPostingCommand command) {
+        return Objects.equals(current.getTitle(), command.title())
+                && Objects.equals(current.getLocation(), command.location())
+                && Objects.equals(current.getEmploymentType(), command.employmentType())
+                && current.isRemote() == command.remote()
+                && Objects.equals(current.getSalary(), new SalaryRange(command.salaryMin(), command.salaryMax(), command.salaryCurrency()))
+                && Objects.equals(current.getDescription(), command.description())
+                && Objects.equals(current.getPostedDate(), command.postedDate())
+                && Objects.equals(current.getApplyUrl(), command.applyUrl());
+    }
+
+    public enum SynchronizationOutcome { CREATED, UPDATED, UNCHANGED }
 }

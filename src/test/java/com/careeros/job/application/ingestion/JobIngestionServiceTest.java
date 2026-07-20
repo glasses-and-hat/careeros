@@ -1,6 +1,5 @@
 package com.careeros.job.application.ingestion;
 
-import com.careeros.common.exception.DuplicateResourceException;
 import com.careeros.common.exception.ResourceNotFoundException;
 import com.careeros.company.domain.AtsType;
 import com.careeros.company.domain.Company;
@@ -76,8 +75,8 @@ class JobIngestionServiceTest {
     void duplicatePostingsAreSkippedNotFailed() {
         Company company = aCompany("acme", AtsType.GREENHOUSE);
         when(companyRepository.findAllEnabled()).thenReturn(List.of(company));
-        when(jobPostingService.create(any()))
-                .thenThrow(new DuplicateResourceException("already exists"));
+        when(jobPostingService.synchronize(any()))
+                .thenReturn(JobPostingService.SynchronizationOutcome.UNCHANGED);
 
         JobIngestionService service = new JobIngestionService(jobPostingService, companyRepository,
                 List.of(new FakeConnector(AtsType.GREENHOUSE, List.of(aCommand("job-1")))));
@@ -93,9 +92,9 @@ class JobIngestionServiceTest {
     void unexpectedPersistFailureIsCountedAndLoopContinues() {
         Company company = aCompany("acme", AtsType.GREENHOUSE);
         when(companyRepository.findAllEnabled()).thenReturn(List.of(company));
-        when(jobPostingService.create(any()))
+        when(jobPostingService.synchronize(any()))
                 .thenThrow(new IllegalArgumentException("bad data"))
-                .thenReturn(null);
+                .thenReturn(JobPostingService.SynchronizationOutcome.CREATED);
 
         JobIngestionService service = new JobIngestionService(jobPostingService, companyRepository,
                 List.of(new FakeConnector(AtsType.GREENHOUSE, List.of(aCommand("job-1"), aCommand("job-2")))));
@@ -112,7 +111,7 @@ class JobIngestionServiceTest {
         Company failingCompany = aCompany("broken", AtsType.GREENHOUSE);
         Company healthyCompany = aCompany("healthy", AtsType.LEVER);
         when(companyRepository.findAllEnabled()).thenReturn(List.of(failingCompany, healthyCompany));
-        when(jobPostingService.create(any())).thenReturn(null);
+        when(jobPostingService.synchronize(any())).thenReturn(JobPostingService.SynchronizationOutcome.CREATED);
 
         JobIngestionService service = new JobIngestionService(jobPostingService, companyRepository, List.of(
                 new FakeConnector(AtsType.GREENHOUSE, new RuntimeException("network error")),

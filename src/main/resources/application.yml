@@ -83,7 +83,6 @@ careeros:
     master-path: ${MASTER_RESUME_PATH:}
     output-directory: ${RESUME_OUTPUT_DIRECTORY:./data/resumes}
     artifact-base-name: ${RESUME_FILE_BASENAME:Tailored_Resume}
-    libre-office-path: ${LIBREOFFICE_PATH:}
     python-path: ${PYTHON_PATH:python3}
     process-timeout: ${RESUME_PROCESS_TIMEOUT:60s}
   matching:

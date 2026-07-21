@@ -120,10 +120,10 @@ Provider lifecycle:
 
 ## Milestone 6 local resume tailoring
 
-Resume tailoring is a dedicated bounded module. `AIProvider`,
-`ResumeDocumentPort`, and `PdfConverter` isolate Ollama, python-docx, and
-LibreOffice from the application workflow. Prompt templates are versioned
-classpath resources; their version is persisted with every artifact.
+Resume tailoring is a dedicated bounded module. `AIProvider` and
+`ResumeDocumentPort` isolate Ollama and python-docx from the application
+workflow. Prompt templates are versioned classpath resources; their version
+is persisted with every artifact.
 
 ```mermaid
 sequenceDiagram
@@ -133,7 +133,6 @@ sequenceDiagram
     participant D as python-docx adapter
     participant AI as Local Ollama
     participant V as Grounding validator
-    participant P as LibreOffice adapter
     participant R as Resume repository
     UI->>API: Generate for existing job
     API->>S: job, notes, optional application
@@ -146,14 +145,13 @@ sequenceDiagram
         S->>V: validate again
     end
     S->>D: create versioned DOCX copy
-    S->>P: convert DOCX to PDF
     S->>R: persist model, prompt, duration, validation, paths
     S-->>UI: review and downloads
 ```
 
 If the second validation fails, CareerOS uses the original extracted bullets.
-PDF failure does not discard a valid DOCX. External processes use argument
-arrays, bounded timeouts, captured output, and never invoke a shell. Resume
+DOCX processing uses argument arrays, bounded timeouts, captured output, and
+never invokes a shell. Resume
 content is sent only to the configured local Ollama endpoint.
 
 ## Why hexagonal, and why a monolith first

@@ -8,9 +8,10 @@
    structured JSON from local Ollama.
 4. Grounding validation rejects technologies and metrics absent from the
    master. One retry is allowed; the safe fallback retains original bullets.
-5. A copied DOCX and optional PDF are stored under
-   `<company>/<date>/<job-id>/v####/<name>.{docx,pdf}` so every generation is
-   readable and prior versions cannot be overwritten.
+5. A copied DOCX is stored under
+   `<company>/<date>/<job-id>/v####/<name>.docx` so every generation is
+   readable and prior versions cannot be overwritten. PDF generation is
+   currently disabled.
 6. Review validation warnings, download artifacts, compare versions, and
    optionally link generation to an application.
 
@@ -35,9 +36,8 @@
   Do not use `--break-system-packages`; CareerOS can invoke the virtual
   environment directly through `PYTHON_PATH`.
 - **No bullets found:** ensure bullet paragraphs use a Word list style.
-- **PDF unavailable:** configure `LIBREOFFICE_PATH`; DOCX remains downloadable.
 - **Validation fallback:** inspect warnings in Resume Library. No ungrounded
-  generated bullets are written when validation still fails after retry.
+  or blank generated bullets are written when validation still fails after retry.
 
 ## Privacy
 

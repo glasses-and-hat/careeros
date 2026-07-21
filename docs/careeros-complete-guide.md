@@ -32,8 +32,7 @@ deployment are not implemented.
 - Tracks applications through a Kanban workflow.
 - Calculates follow-up and interview reminders.
 - Provides aggregate application and discovery analytics.
-- Generates grounded DOCX and PDF resumes using local Ollama, python-docx,
-  and LibreOffice.
+- Generates grounded DOCX resumes using local Ollama and python-docx.
 - Stores every generated resume as a versioned artifact.
 
 ## Technology and architecture
@@ -51,7 +50,7 @@ deployment are not implemented.
 | Charts | Recharts |
 | Animation | Framer Motion |
 | Local AI | Ollama REST API |
-| Documents | python-docx and LibreOffice headless |
+| Documents | python-docx |
 | API contract | OpenAPI and Orval-generated TypeScript client |
 | Tests | JUnit, Mockito, Testcontainers, Vitest, RTL, Playwright |
 
@@ -180,7 +179,7 @@ The Resume Library supports:
 - Multi-file archive
 - Restore archived versions
 - Compare two selected versions
-- Download DOCX and PDF artifacts
+- Download DOCX artifacts
 
 ### Settings — `/settings`
 
@@ -256,7 +255,6 @@ Job + immutable master DOCX
 → retry once if invalid
 → conservative fallback if still invalid
 → versioned DOCX
-→ LibreOffice PDF
 → persisted metadata and artifacts
 ```
 
@@ -267,7 +265,6 @@ Artifacts are stored as:
 
 ```text
 data/resumes/<company>/<date>/<job-id>/v####/<configured-name>.docx
-data/resumes/<company>/<date>/<job-id>/v####/<configured-name>.pdf
 ```
 
 The master resume is never overwritten.
@@ -346,12 +343,11 @@ brew services start ollama
 ollama pull llama3.1:8b
 ollama pull mistral:7b
 ollama pull nomic-embed-text
-brew install --cask libreoffice
 ```
 
 For Docker, place the master resume at `data/master-resume.docx`. The Docker
-image includes an isolated Python environment with python-docx and includes
-LibreOffice. Ollama remains on the host and is reached through
+image includes an isolated Python environment with python-docx. Ollama remains
+on the host and is reached through
 `host.docker.internal`.
 
 Important environment variables:
@@ -365,7 +361,6 @@ Important environment variables:
 | `MASTER_RESUME_PATH` | Immutable master DOCX |
 | `RESUME_OUTPUT_DIRECTORY` | Versioned artifact root |
 | `RESUME_FILE_BASENAME` | Human-readable output filename |
-| `LIBREOFFICE_PATH` | `soffice` binary |
 | `RESUME_PROCESS_TIMEOUT` | Document process timeout |
 
 ## REST API overview
@@ -439,7 +434,7 @@ Statuses include `WISHLIST`, `APPLIED`, `RECRUITER_CONTACTED`,
 | GET | `/api/resumes` | List resume versions |
 | GET | `/api/resumes/{id}` | Get resume metadata |
 | GET | `/api/resumes/job/{jobId}` | Job generation history |
-| GET | `/api/resumes/{id}/download/{format}` | Download DOCX or PDF |
+| GET | `/api/resumes/{id}/download/docx` | Download DOCX |
 | DELETE | `/api/resumes/{id}` | Archive a version |
 | POST | `/api/resumes/{id}/restore` | Restore an archived version |
 | GET | `/api/resumes/health` | Ollama and model diagnostics |
@@ -532,7 +527,7 @@ discarded.
   merely unpublished.
 - Resume bullet replacement depends on recognizable DOCX paragraph/list
   structure.
-- PDF generation requires LibreOffice.
+- PDF generation is currently disabled.
 - No cloud AI provider is implemented; resume processing is local by design.
 
 ## Related documentation

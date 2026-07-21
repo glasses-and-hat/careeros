@@ -28,8 +28,7 @@ every page, API group, workflow, configuration option, and known limitation.
 - Company catalog, provider configuration, watchlists, and bulk ingestion
 - Searchable job discovery with score breakdowns and application state
 - Application Kanban board, reminders, dashboard, saved searches, and analytics
-- Locally generated DOCX/PDF resume versions using Ollama, python-docx, and
-  LibreOffice
+- Locally generated DOCX resume versions using Ollama and python-docx
 - React interface with dark mode, keyboard navigation, responsive layouts,
   optimistic updates, and an OpenAPI-generated API client
 
@@ -49,7 +48,7 @@ implemented.
 | Visualization | Recharts, Framer Motion |
 | API contract | OpenAPI, springdoc, Orval-generated TypeScript client |
 | Local AI | Ollama REST API |
-| Documents | python-docx, LibreOffice headless |
+| Documents | python-docx |
 | Testing | JUnit, Mockito, Testcontainers, Vitest, RTL, Playwright |
 
 ## Architecture
@@ -74,7 +73,7 @@ provider-based ingestion decision.
 
 - Docker-compatible runtime and Docker Compose
 - Node.js 20 or newer with npm
-- Ollama and LibreOffice only when generating resumes
+- Ollama only when generating resumes
 
 On macOS with Colima, start the container runtime from any directory:
 
@@ -144,16 +143,13 @@ For a Docker Compose setup:
 
 1. Install and start Ollama on the host.
 2. Pull `llama3.1:8b` (plus optional fast and embedding models).
-3. Install LibreOffice only when running the backend outside its container;
-   the backend image already includes it.
-4. Place the immutable master resume at `data/master-resume.docx`.
-5. Start CareerOS and verify `GET /api/resumes/health`.
+3. Place the immutable master resume at `data/master-resume.docx`.
+4. Start CareerOS and verify `GET /api/resumes/health`.
 
 Generated files use this structure:
 
 ```text
 data/resumes/<company>/<date>/<job-id>/v####/<configured-name>.docx
-data/resumes/<company>/<date>/<job-id>/v####/<configured-name>.pdf
 ```
 
 See [Local AI resumes](docs/local-ai-resumes.md) for installation,

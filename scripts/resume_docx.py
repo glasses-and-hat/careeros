@@ -37,6 +37,8 @@ def extract(path):
     }))
 
 def generate(source,target,bullets):
+    if not bullets or any(not isinstance(value, str) or not value.strip() for value in bullets):
+        raise RuntimeError('Generated bullets must all contain text')
     shutil.copy2(source,target)
     doc = Document(target)
     candidates = [p for p in paragraphs(doc) if is_bullet(p)]

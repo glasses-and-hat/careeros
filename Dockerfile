@@ -13,7 +13,7 @@ RUN ./mvnw -q -B package -DskipTests
 FROM eclipse-temurin:21-jre-alpine
 WORKDIR /app
 
-RUN apk add --no-cache python3 py3-pip libreoffice \
+RUN apk add --no-cache python3 py3-pip \
     && python3 -m venv /opt/careeros-venv \
     && /opt/careeros-venv/bin/pip install --no-cache-dir python-docx==1.2.0 \
     && addgroup -S careeros \

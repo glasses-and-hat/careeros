@@ -1,230 +1,97 @@
 # CareerOS
 
-CareerOS is an AI-powered job discovery and career management platform. It
-continuously monitors target companies, discovers new job postings across
-multiple Applicant Tracking Systems, normalizes them into a common domain
-model, scores them against a user's preferences, and (eventually) helps
-optimize resumes and manage the application pipeline.
+CareerOS is a self-hosted career operating system for discovering jobs,
+ranking them against personal preferences, monitoring target companies,
+tracking applications and follow-ups, and generating factually grounded
+resumes with local AI.
 
-This repository currently implements **Milestone 1: the foundation** —
-domain model, persistence, and CRUD APIs for companies, job postings, and
-user preferences — and **Milestone 2: ATS connectors**, which ingest job
-postings from Greenhouse, Lever, Ashby, Workday, and SmartRecruiters. Scoring,
-AI resume optimization, recruiter CRM, and notifications are not implemented
-yet; see [`docs/architecture.md`](docs/architecture.md) for how the
-architecture is designed to accommodate them without rework.
+It combines a Java/Spring Boot backend with a React application and is built
+for a practical daily workflow:
 
-## Tech stack
+```text
+Monitor companies -> ingest jobs -> rank matches -> review and apply
+-> track progress -> follow up -> generate and retain resume versions
+```
 
-| Layer | Choice |
+The [complete application guide](docs/careeros-complete-guide.md) explains
+every page, API group, workflow, configuration option, and known limitation.
+
+## What is implemented
+
+- Pluggable job providers for Greenhouse, Lever, Ashby, Workday,
+  SmartRecruiters, generic HTML, RSS/Atom, and JSON sources
+- Primary and fallback provider chains, synchronization history, health
+  aggregation, retries, and Micrometer metrics
+- Deterministic job scoring by role, technology, location, remote preference,
+  company priority, and recency
+- US-only and Chicagoland/remote preference filtering
+- Company catalog, provider configuration, watchlists, and bulk ingestion
+- Searchable job discovery with score breakdowns and application state
+- Application Kanban board, reminders, dashboard, saved searches, and analytics
+- Locally generated DOCX/PDF resume versions using Ollama, python-docx, and
+  LibreOffice
+- React interface with dark mode, keyboard navigation, responsive layouts,
+  optimistic updates, and an OpenAPI-generated API client
+
+CareerOS is currently a single-user application. Authentication, multi-tenant
+ownership, semantic search, cloud AI providers, and hosted deployment are not
+implemented.
+
+## Technology
+
+| Area | Technology |
 |---|---|
-| Language / runtime | Java 21 |
-| Framework | Spring Boot 3.3 (Web, Data JPA, Validation, Actuator) |
-| Database | PostgreSQL 16 |
-| Schema migrations | Flyway (no Hibernate `ddl-auto`) |
-| HTTP client (outbound, ATS ingestion) | Spring `RestClient` (ships with `spring-boot-starter-web`, no new dependency) |
-| API docs | springdoc-openapi / Swagger UI |
-| Build | Maven (wrapper included, no local install required) |
-| Containerization | Docker, Docker Compose |
-| Testing | JUnit 5, Mockito, AssertJ, Testcontainers |
+| Backend | Java 21, Spring Boot 3.3 |
+| Architecture | Modular monolith, Hexagonal Architecture |
+| Database | PostgreSQL 16, Flyway |
+| Frontend | React 19, TypeScript, Vite, Tailwind CSS |
+| Data/UI | TanStack Query, TanStack Table, React Hook Form, Zod, Zustand |
+| Visualization | Recharts, Framer Motion |
+| API contract | OpenAPI, springdoc, Orval-generated TypeScript client |
+| Local AI | Ollama REST API |
+| Documents | python-docx, LibreOffice headless |
+| Testing | JUnit, Mockito, Testcontainers, Vitest, RTL, Playwright |
 
-Frontend (React/TypeScript/Tailwind) and infra-as-code (Terraform/AWS) are
-future milestones and not part of this repository yet.
+## Architecture
 
-## Architecture at a glance
+CareerOS uses Ports and Adapters. Controllers call application use cases;
+application services orchestrate domain behavior; repository/provider
+interfaces are ports; and persistence, HTTP integrations, document processing,
+and REST controllers are adapters. Controllers do not access repositories
+directly.
 
-Modular monolith, Hexagonal Architecture (Ports & Adapters), one module per
-business capability (`company`, `job`, `preference`). Full write-up,
-Mermaid diagrams, and sequence diagrams for the main request flows are in
-[`docs/architecture.md`](docs/architecture.md).
+Backend capabilities are organized under `src/main/java/com/careeros`.
+The frontend follows a feature/page structure under `frontend/src`, with
+TanStack Query owning server state and Zustand limited to persisted UI state.
 
-```
-com.careeros
-├── config/          cross-cutting Spring configuration
-├── common/          shared kernel: exceptions, PageResponse, GlobalExceptionHandler
-├── company/         domain · application · infrastructure · web
-├── job/             domain · application · infrastructure · web
-└── preference/      domain · application · infrastructure · web
-```
+See [Architecture](docs/architecture.md) for module and sequence diagrams and
+[ADR-0005](docs/adr/0005-provider-based-ingestion-architecture.md) for the
+provider-based ingestion decision.
 
-## Getting started
+## Quick start
 
 ### Prerequisites
 
-- Docker and Docker Compose (recommended path — no local JDK/Maven needed)
-- **or**, for local development without Docker: JDK 21 and PostgreSQL 16
-  (Maven itself is not required — this repo includes `./mvnw`)
+- Docker-compatible runtime and Docker Compose
+- Node.js 20 or newer with npm
+- Ollama and LibreOffice only when generating resumes
 
-### Option A — run everything with Docker Compose
-
-```bash
-docker compose up --build
-```
-
-This starts PostgreSQL and the application. Flyway migrations run
-automatically on startup. Once healthy:
-
-- API: http://localhost:8080/api/v1
-- Swagger UI: http://localhost:8080/swagger-ui.html
-- Health: http://localhost:8080/actuator/health
-
-Copy `.env.example` to `.env` first if you want to override the default DB
-credentials or ports.
-
-### Option B — run the app locally against a Dockerized database
+On macOS with Colima, start the container runtime from any directory:
 
 ```bash
-docker compose up -d postgres
-./mvnw spring-boot:run
+colima start
 ```
 
-The app defaults to `localhost:5432` / db `careeros` / user & password
-`careeros` (see `src/main/resources/application.yml`); override via the
-`DB_HOST`, `DB_PORT`, `DB_NAME`, `DB_USERNAME`, `DB_PASSWORD` environment
-variables.
-
-### Running tests
+Run the backend and PostgreSQL from the repository root:
 
 ```bash
-./mvnw test      # unit + controller (Mockito/MockMvc) tests — no external services needed
-./mvnw verify     # also runs *IT repository tests against a real PostgreSQL via Testcontainers (needs Docker)
+cp .env.example .env
+docker compose up --build -d
+curl http://localhost:8080/actuator/health
 ```
 
-Fast unit/controller tests (`*Test`) run under `mvn test` via Surefire.
-Repository tests that spin up a real PostgreSQL instance (`*IT`, backed by
-Testcontainers) run separately under `mvn verify` via Failsafe, so the fast
-suite never needs a Docker daemon.
-
-## API overview
-
-All endpoints are under `/api/v1`. Every list endpoint supports pagination
-(`page`, `size`) and sorting (`sort=field,asc|desc`); filtering is via query
-parameters specific to each resource. Full request/response schemas are in
-Swagger UI at `/swagger-ui.html` once the app is running.
-
-| Resource | Endpoints |
-|---|---|
-| Companies | `POST /companies`, `GET /companies`, `GET /companies/{id}`, `PUT /companies/{id}`, `DELETE /companies/{id}` |
-| Jobs | `POST /jobs`, `GET /jobs`, `GET /jobs/{id}`, `PUT /jobs/{id}`, `DELETE /jobs/{id}` |
-| Preferences | `POST /preferences`, `GET /preferences`, `GET /preferences/{id}`, `PUT /preferences/{id}`, `DELETE /preferences/{id}` |
-| Ingestion | `POST /ingestion/runs` (all enabled companies), `POST /ingestion/companies/{id}/runs` (one company) |
-
-Company filters: `name`, `atsType`, `priority`, `enabled`.
-Job filters: `companyId`, `title`, `location`, `employmentType`, `remote`, `postedAfter`.
-
-Errors are returned as [RFC 7807](https://www.rfc-editor.org/rfc/rfc7807)
-`application/problem+json` bodies (`404` not found, `409` duplicate,
-`400` validation, `500` unexpected).
-
-### Example
-
-```bash
-curl -X POST http://localhost:8080/api/v1/companies \
-  -H "Content-Type: application/json" \
-  -d '{
-        "name": "Acme Inc",
-        "careerUrl": "https://acme.example/careers",
-        "atsType": "GREENHOUSE",
-        "priority": "HIGH",
-        "enabled": true
-      }'
-```
-
-## ATS connectors and ingestion
-
-Each `Company` has an `atsType` and an `atsIdentifier` — the connector-specific
-key needed to call that ATS's public job-board API. All five APIs are
-public/unauthenticated; no credentials to configure.
-
-| ATS | `atsIdentifier` format | Example |
-|---|---|---|
-| Greenhouse | board token | `acme` |
-| Lever | site slug | `acme` |
-| Ashby | job-board name | `acme` |
-| SmartRecruiters | company identifier | `AcmeInc` |
-| Workday | `tenant/site` | `acme/External` |
-
-Ingestion can be triggered two ways:
-- **Manually**: `POST /api/v1/ingestion/runs` (all enabled companies) or
-  `POST /api/v1/ingestion/companies/{id}/runs` (one company, regardless of
-  its `enabled` flag). Both return a summary of created/skipped/failed
-  postings per company — duplicates (already-ingested postings) are counted
-  as skipped, not failures, and one company's fetch failure never stops the
-  others from being processed.
-- **On a schedule**: an optional `@Scheduled` poller, off by default. Enable
-  it with `careeros.ingestion.enabled=true`; interval and HTTP timeouts are
-  configurable via `careeros.ingestion.poll-interval` /
-  `connect-timeout` / `read-timeout` (see `application.yml`).
-
-## Database migrations
-
-Schema is owned entirely by Flyway (`src/main/resources/db/migration`);
-Hibernate `ddl-auto` is `none`. Add new migrations as
-`V{next}__description.sql` — never edit an already-applied migration.
-
-| Migration | Contents |
-|---|---|
-| `V1` | `companies` table |
-| `V2` | `job_postings` table (FK to companies, unique hash for duplicate detection) |
-| `V3` | `user_preferences` + its `roles`/`technologies`/`locations` collection tables |
-| `V4` | Adds nullable `ats_identifier` column to `companies` |
-| `V5` | Job discovery, applications, watchlists, searches, and reminders |
-| `V6` | Provider configuration, fallback chains, sync history, and health metrics |
-| `V7` | US-only job preference |
-| `V8` | Versioned resume artifacts and application linkage |
-| `V9` | Disables legacy companies that have no monitoring provider configured |
-| `V10` | Repairs Confluent's provider and disables known-stale catalog integrations |
-| `V11` | Enables company providers verified against their public feeds |
-| `V12` | Expands multi-location job data beyond 255 characters |
-| `V13` | Enables Nvidia through its numbered Workday shard |
-
-## Local AI resume tailoring
-
-CareerOS can tailor an existing master DOCX for a discovered job without
-sending resume data to a cloud provider. Ollama performs structured local
-generation, `python-docx` preserves the source document, grounding validation
-rejects unknown technologies and metrics, and LibreOffice creates the PDF.
-
-```bash
-brew install ollama
-brew services start ollama
-ollama pull llama3.1:8b
-ollama pull mistral:7b
-ollama pull nomic-embed-text
-brew install --cask libreoffice
-
-# Uses the Python selected by pyenv without modifying Homebrew Python.
-python3 -m venv .venv
-source .venv/bin/activate
-python -m pip install --upgrade pip
-python -m pip install python-docx
-
-export MASTER_RESUME_PATH=/absolute/path/to/master-resume.docx
-export RESUME_OUTPUT_DIRECTORY=/absolute/path/to/careeros-resumes
-export RESUME_FILE_BASENAME=Rahul_Yellapragada
-export PYTHON_PATH="$PWD/.venv/bin/python"
-./mvnw spring-boot:run
-```
-
-For Docker Compose, place the immutable master at
-`data/master-resume.docx`. Generated artifacts use readable, version-safe paths:
-`data/resumes/<company>/<date>/<job-id>/v####/<name>.{docx,pdf}`.
-Ollama remains on the host and is reached through `host.docker.internal`.
-
-Configuration: `OLLAMA_BASE_URL`, `OLLAMA_PRIMARY_MODEL`,
-`OLLAMA_FAST_MODEL`, `OLLAMA_EMBED_MODEL`, `MASTER_RESUME_PATH`,
-`RESUME_OUTPUT_DIRECTORY`, `RESUME_FILE_BASENAME`, and `LIBREOFFICE_PATH`.
-
-Open a job and select **Generate Tailored Resume**, or browse `/resumes` to
-compare, download, archive, and restore versions. Diagnostics are available at
-`GET /api/resumes/health`. The master resume is read-only and never overwritten.
-
-## Frontend application
-
-The production frontend lives in [`frontend/`](frontend). It is a React 19
-single-page application built with Vite, strict TypeScript, Tailwind CSS,
-TanStack Query/Table, React Hook Form + Zod, Recharts, Framer Motion, and
-Zustand. Start the backend first, then run:
+Docker Compose starts PostgreSQL and the Spring Boot backend. Start the Vite
+frontend separately:
 
 ```bash
 cd frontend
@@ -232,82 +99,153 @@ npm install
 npm run dev
 ```
 
-Vite serves the application at `http://localhost:5173` and proxies `/api`
-requests to `http://localhost:8080`. The `/resumes` route provides the local
-resume library. Create a production bundle with
-`npm run build`; preview it with `npm run preview`.
+Open:
 
-### Frontend architecture
+- Application: <http://localhost:5173>
+- Swagger UI: <http://localhost:8080/swagger-ui.html>
+- OpenAPI JSON: <http://localhost:8080/v3/api-docs>
+- Backend health: <http://localhost:8080/actuator/health>
+
+Stop the backend and database without deleting stored data:
+
+```bash
+docker compose down
+```
+
+Stop the frontend with `Ctrl+C` in its terminal. Avoid
+`docker compose down -v` unless the PostgreSQL data may be deleted.
+
+## Running from source
+
+Start only PostgreSQL in Docker, then run the backend and frontend in separate
+terminals:
+
+```bash
+docker compose up -d postgres
+./mvnw spring-boot:run
+```
+
+```bash
+cd frontend
+npm install
+npm run dev
+```
+
+Database defaults and all supported environment variables are documented in
+the [complete guide](docs/careeros-complete-guide.md#running-from-source).
+
+## Local resume generation
+
+CareerOS sends resume content only to the locally configured Ollama server.
+The master DOCX is never overwritten; every output is stored as a versioned
+artifact.
+
+For a Docker Compose setup:
+
+1. Install and start Ollama on the host.
+2. Pull `llama3.1:8b` (plus optional fast and embedding models).
+3. Install LibreOffice only when running the backend outside its container;
+   the backend image already includes it.
+4. Place the immutable master resume at `data/master-resume.docx`.
+5. Start CareerOS and verify `GET /api/resumes/health`.
+
+Generated files use this structure:
 
 ```text
-frontend/src/
-├── api/
-│   ├── generated/       # Orval output; never edit by hand
-│   └── fetcher.ts       # shared HTTP/error boundary
-├── components/          # application shell and reusable UI primitives
-├── pages/               # lazy-loaded route features
-├── stores/              # persisted UI-only Zustand state
-├── lib/                 # formatting and styling utilities
-└── test/                # Vitest + React Testing Library
+data/resumes/<company>/<date>/<job-id>/v####/<configured-name>.docx
+data/resumes/<company>/<date>/<job-id>/v####/<configured-name>.pdf
 ```
 
-Server state belongs exclusively to TanStack Query. Mutations invalidate
-generated query keys; the application Kanban uses an optimistic cache update
-with rollback. Zustand only stores sidebar, theme, command-palette, and
-notification-panel state. It does not duplicate API data.
+See [Local AI resumes](docs/local-ai-resumes.md) for installation,
+configuration, privacy, and troubleshooting details.
 
-Routes are lazy loaded under one responsive application shell. `/` is the
-daily dashboard; `/jobs`, `/applications`, `/companies`, `/watchlists`,
-`/searches`, `/analytics`, and `/settings` are independent route chunks. A
-route error boundary and wildcard 404 handle failures without losing the
-shell.
+## Main application routes
 
-Theme selection supports light, dark, and operating-system modes. The choice
-is persisted locally and applied at the document root, with WCAG-conscious
-focus rings and reduced-motion support. The sidebar state is persisted using
-the same UI store. Press `Ctrl/Cmd + K` for global navigation.
+| Route | Purpose |
+|---|---|
+| `/` | Daily dashboard, top matches, activity, and reminders |
+| `/jobs` | Filtered job discovery and job details |
+| `/applications` | Application Kanban and in-page job details |
+| `/companies` | Company monitoring, providers, and manual sync |
+| `/watchlists` | Prioritized company groups |
+| `/searches` | Reusable job searches |
+| `/analytics` | Discovery and application metrics |
+| `/resumes` | Resume history, filtering, comparison, downloads, and archive |
+| `/settings` | Theme and interface preferences |
 
-### Typed API client
+## REST API
 
-[`frontend/openapi/careeros.yaml`](frontend/openapi/careeros.yaml) is the
-checked-in API contract snapshot. Regenerate all TypeScript models, request
-functions, TanStack Query hooks, and query keys with:
+Swagger UI is the authoritative interactive contract. The major API groups
+are:
+
+| Area | Base endpoints |
+|---|---|
+| Dashboard/discovery | `/api/dashboard`, `/api/jobs/timeline` |
+| Analytics/reminders | `/api/analytics`, `/api/reminders` |
+| Companies | `/api/v1/companies` |
+| Ingestion | `/api/v1/ingestion` |
+| Jobs/preferences | `/api/v1/jobs`, `/api/v1/preferences` |
+| Applications | `/api/applications` |
+| Watchlists/searches | `/api/watchlists`, `/api/saved-searches` |
+| Provider operations | `/api/sync-history`, `/api/provider-health` |
+| Resume operations | `/api/resumes` |
+
+Lists support resource-appropriate pagination, filtering, sorting, and
+validation. Errors use `application/problem+json` responses.
+
+## Testing
+
+Backend unit/controller tests:
+
+```bash
+./mvnw test
+```
+
+Backend integration tests with PostgreSQL Testcontainers:
+
+```bash
+./mvnw verify
+```
+
+Frontend tests and production build:
 
 ```bash
 cd frontend
-npm run api:generate
+npm test
+npm run build
 ```
 
-Production source code imports only the generated operations. When backend
-contracts change, update the snapshot from `/v3/api-docs`, regenerate, and let
-TypeScript identify impacted screens.
-
-### Frontend tests
+Playwright smoke tests require the application services to be running:
 
 ```bash
 cd frontend
-npm test             # component and integration tests
-npm run build        # strict typecheck plus optimized production bundle
-npx playwright install chromium
-npm run e2e          # browser smoke test against the preview server
+npx playwright test
 ```
 
-## Project status / roadmap
+## Database migrations
 
-- [x] Milestone 1 — foundation: domain model, persistence, CRUD APIs, OpenAPI, tests, Docker
-- [x] Milestone 2 — ATS connectors (Greenhouse, Lever, Ashby, Workday, SmartRecruiters)
-- [ ] Duplicate detection (fuzzy/semantic, beyond the exact-hash check already in place)
-- [x] Job matching / scoring against user preferences
-- [ ] AI-assisted resume optimization (OpenAI, pgvector semantic matching)
-- [ ] Recruiter CRM
-- [x] Notifications and reminders
-- [x] Analytics
-- [x] React/TypeScript/Tailwind frontend
-- [ ] Terraform/AWS infrastructure
+Flyway exclusively owns the schema in
+`src/main/resources/db/migration`. Hibernate schema generation is disabled.
+Add a new versioned migration for every schema change and never modify a
+migration already applied to a shared database.
 
-See [`docs/architecture.md`](docs/architecture.md) for how each of these is
-expected to plug into the existing module structure.
+## Documentation
 
-For a complete setup, product workflow, frontend page, API, configuration, and
-troubleshooting reference, see the [CareerOS Product and Operations
-Guide](docs/product-guide.md).
+- [Complete application and operations guide](docs/careeros-complete-guide.md)
+- [Architecture](docs/architecture.md)
+- [Local AI resume module](docs/local-ai-resumes.md)
+- [Architecture decision records](docs/adr)
+
+## Useful operational commands
+
+```bash
+docker compose ps
+docker compose logs --tail=200 app
+docker system df
+curl http://localhost:8080/actuator/health
+curl http://localhost:8080/api/resumes/health
+```
+
+Review Docker disk usage before pruning data. The PostgreSQL volume contains
+the application's persisted companies, jobs, applications, and resume
+metadata.

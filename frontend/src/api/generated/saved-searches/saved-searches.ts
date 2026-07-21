@@ -42,7 +42,7 @@ export type listSavedSearchesResponse200 = {
   data: SavedSearchPage
   status: 200
 }
-    
+
 export type listSavedSearchesResponseSuccess = (listSavedSearchesResponse200) & {
   headers: Headers;
 };
@@ -54,7 +54,7 @@ export const getListSavedSearchesUrl = (params?: ListSavedSearchesParams,) => {
   const normalizedParams = new URLSearchParams();
 
   Object.entries(params || {}).forEach(([key, value]) => {
-    
+
     if (value !== undefined) {
       normalizedParams.append(key, value === null ? 'null' : value.toString())
     }
@@ -66,13 +66,13 @@ export const getListSavedSearchesUrl = (params?: ListSavedSearchesParams,) => {
 }
 
 export const listSavedSearches = async (params?: ListSavedSearchesParams, options?: RequestInit): Promise<listSavedSearchesResponse> => {
-  
+
   return apiFetch<listSavedSearchesResponse>(getListSavedSearchesUrl(params),
-  {      
+  {
     ...options,
     method: 'GET'
-    
-    
+
+
   }
 );}
 
@@ -86,7 +86,7 @@ export const getListSavedSearchesQueryKey = (params?: ListSavedSearchesParams,) 
     ] as const;
     }
 
-    
+
 export const getListSavedSearchesQueryOptions = <TData = Awaited<ReturnType<typeof listSavedSearches>>, TError = unknown>(params?: ListSavedSearchesParams, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof listSavedSearches>>, TError, TData>>, request?: SecondParameter<typeof apiFetch>}
 ) => {
 
@@ -94,13 +94,13 @@ const {query: queryOptions, request: requestOptions} = options ?? {};
 
   const queryKey =  queryOptions?.queryKey ?? getListSavedSearchesQueryKey(params);
 
-  
+
 
     const queryFn: QueryFunction<Awaited<ReturnType<typeof listSavedSearches>>> = ({ signal }) => listSavedSearches(params, { signal, ...requestOptions });
 
-      
 
-      
+
+
 
    return  { queryKey, queryFn, ...queryOptions} as UseQueryOptions<Awaited<ReturnType<typeof listSavedSearches>>, TError, TData> & { queryKey: DataTag<QueryKey, TData> }
 }
@@ -136,7 +136,7 @@ export function useListSavedSearches<TData = Awaited<ReturnType<typeof listSaved
 
 export function useListSavedSearches<TData = Awaited<ReturnType<typeof listSavedSearches>>, TError = unknown>(
  params?: ListSavedSearchesParams, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof listSavedSearches>>, TError, TData>>, request?: SecondParameter<typeof apiFetch>}
- , queryClient?: QueryClient 
+ , queryClient?: QueryClient
  ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData> } {
 
   const queryOptions = getListSavedSearchesQueryOptions(params,options)
@@ -155,7 +155,7 @@ export type createSavedSearchResponse200 = {
   data: SavedSearch
   status: 200
 }
-    
+
 export type createSavedSearchResponseSuccess = (createSavedSearchResponse200) & {
   headers: Headers;
 };
@@ -166,15 +166,15 @@ export type createSavedSearchResponse = (createSavedSearchResponseSuccess)
 export const getCreateSavedSearchUrl = () => {
 
 
-  
+
 
   return `/api/saved-searches`
 }
 
 export const createSavedSearch = async (savedSearchRequest: SavedSearchRequest, options?: RequestInit): Promise<createSavedSearchResponse> => {
-  
+
   return apiFetch<createSavedSearchResponse>(getCreateSavedSearchUrl(),
-  {      
+  {
     ...options,
     method: 'POST',
     headers: { 'Content-Type': 'application/json', ...options?.headers },
@@ -197,7 +197,7 @@ const {mutation: mutationOptions, request: requestOptions} = options ?
       : {...options, mutation: {...options.mutation, mutationKey}}
       : {mutation: { mutationKey, }, request: undefined};
 
-      
+
 
 
       const mutationFn: MutationFunction<Awaited<ReturnType<typeof createSavedSearch>>, {data: SavedSearchRequest}> = (props) => {
@@ -206,7 +206,7 @@ const {mutation: mutationOptions, request: requestOptions} = options ?
           return  createSavedSearch(data,requestOptions)
         }
 
-        
+
 
 
   return  { mutationFn, ...mutationOptions }}
@@ -232,7 +232,7 @@ const {mutation: mutationOptions, request: requestOptions} = options ?
   data: JobPostingPage
   status: 200
 }
-    
+
 export type executeSavedSearchResponseSuccess = (executeSavedSearchResponse200) & {
   headers: Headers;
 };
@@ -243,19 +243,19 @@ export type executeSavedSearchResponse = (executeSavedSearchResponseSuccess)
 export const getExecuteSavedSearchUrl = (id: string,) => {
 
 
-  
+
 
   return `/api/saved-searches/${id}/execute`
 }
 
 export const executeSavedSearch = async (id: string, options?: RequestInit): Promise<executeSavedSearchResponse> => {
-  
+
   return apiFetch<executeSavedSearchResponse>(getExecuteSavedSearchUrl(id),
-  {      
+  {
     ...options,
     method: 'POST'
-    
-    
+
+
   }
 );}
 
@@ -273,7 +273,7 @@ const {mutation: mutationOptions, request: requestOptions} = options ?
       : {...options, mutation: {...options.mutation, mutationKey}}
       : {mutation: { mutationKey, }, request: undefined};
 
-      
+
 
 
       const mutationFn: MutationFunction<Awaited<ReturnType<typeof executeSavedSearch>>, {id: string}> = (props) => {
@@ -282,13 +282,13 @@ const {mutation: mutationOptions, request: requestOptions} = options ?
           return  executeSavedSearch(id,requestOptions)
         }
 
-        
+
 
 
   return  { mutationFn, ...mutationOptions }}
 
     export type ExecuteSavedSearchMutationResult = NonNullable<Awaited<ReturnType<typeof executeSavedSearch>>>
-    
+
     export type ExecuteSavedSearchMutationError = unknown
 
     export const useExecuteSavedSearch = <TError = unknown,
@@ -304,4 +304,3 @@ const {mutation: mutationOptions, request: requestOptions} = options ?
 
       return useMutation(mutationOptions, queryClient);
     }
-    

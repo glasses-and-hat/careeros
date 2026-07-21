@@ -41,7 +41,7 @@ export type listApplicationsResponse200 = {
   data: ApplicationPage
   status: 200
 }
-    
+
 export type listApplicationsResponseSuccess = (listApplicationsResponse200) & {
   headers: Headers;
 };
@@ -53,7 +53,7 @@ export const getListApplicationsUrl = (params?: ListApplicationsParams,) => {
   const normalizedParams = new URLSearchParams();
 
   Object.entries(params || {}).forEach(([key, value]) => {
-    
+
     if (value !== undefined) {
       normalizedParams.append(key, value === null ? 'null' : value.toString())
     }
@@ -65,13 +65,13 @@ export const getListApplicationsUrl = (params?: ListApplicationsParams,) => {
 }
 
 export const listApplications = async (params?: ListApplicationsParams, options?: RequestInit): Promise<listApplicationsResponse> => {
-  
+
   return apiFetch<listApplicationsResponse>(getListApplicationsUrl(params),
-  {      
+  {
     ...options,
     method: 'GET'
-    
-    
+
+
   }
 );}
 
@@ -85,7 +85,7 @@ export const getListApplicationsQueryKey = (params?: ListApplicationsParams,) =>
     ] as const;
     }
 
-    
+
 export const getListApplicationsQueryOptions = <TData = Awaited<ReturnType<typeof listApplications>>, TError = unknown>(params?: ListApplicationsParams, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof listApplications>>, TError, TData>>, request?: SecondParameter<typeof apiFetch>}
 ) => {
 
@@ -93,13 +93,13 @@ const {query: queryOptions, request: requestOptions} = options ?? {};
 
   const queryKey =  queryOptions?.queryKey ?? getListApplicationsQueryKey(params);
 
-  
+
 
     const queryFn: QueryFunction<Awaited<ReturnType<typeof listApplications>>> = ({ signal }) => listApplications(params, { signal, ...requestOptions });
 
-      
 
-      
+
+
 
    return  { queryKey, queryFn, ...queryOptions} as UseQueryOptions<Awaited<ReturnType<typeof listApplications>>, TError, TData> & { queryKey: DataTag<QueryKey, TData> }
 }
@@ -135,7 +135,7 @@ export function useListApplications<TData = Awaited<ReturnType<typeof listApplic
 
 export function useListApplications<TData = Awaited<ReturnType<typeof listApplications>>, TError = unknown>(
  params?: ListApplicationsParams, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof listApplications>>, TError, TData>>, request?: SecondParameter<typeof apiFetch>}
- , queryClient?: QueryClient 
+ , queryClient?: QueryClient
  ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData> } {
 
   const queryOptions = getListApplicationsQueryOptions(params,options)
@@ -154,7 +154,7 @@ export type createApplicationResponse201 = {
   data: Application
   status: 201
 }
-    
+
 export type createApplicationResponseSuccess = (createApplicationResponse201) & {
   headers: Headers;
 };
@@ -165,15 +165,15 @@ export type createApplicationResponse = (createApplicationResponseSuccess)
 export const getCreateApplicationUrl = () => {
 
 
-  
+
 
   return `/api/applications`
 }
 
 export const createApplication = async (applicationRequest: ApplicationRequest, options?: RequestInit): Promise<createApplicationResponse> => {
-  
+
   return apiFetch<createApplicationResponse>(getCreateApplicationUrl(),
-  {      
+  {
     ...options,
     method: 'POST',
     headers: { 'Content-Type': 'application/json', ...options?.headers },
@@ -196,7 +196,7 @@ const {mutation: mutationOptions, request: requestOptions} = options ?
       : {...options, mutation: {...options.mutation, mutationKey}}
       : {mutation: { mutationKey, }, request: undefined};
 
-      
+
 
 
       const mutationFn: MutationFunction<Awaited<ReturnType<typeof createApplication>>, {data: ApplicationRequest}> = (props) => {
@@ -205,7 +205,7 @@ const {mutation: mutationOptions, request: requestOptions} = options ?
           return  createApplication(data,requestOptions)
         }
 
-        
+
 
 
   return  { mutationFn, ...mutationOptions }}
@@ -231,7 +231,7 @@ const {mutation: mutationOptions, request: requestOptions} = options ?
   data: Application
   status: 200
 }
-    
+
 export type updateApplicationResponseSuccess = (updateApplicationResponse200) & {
   headers: Headers;
 };
@@ -242,16 +242,16 @@ export type updateApplicationResponse = (updateApplicationResponseSuccess)
 export const getUpdateApplicationUrl = (id: string,) => {
 
 
-  
+
 
   return `/api/applications/${id}`
 }
 
 export const updateApplication = async (id: string,
     applicationRequest: ApplicationRequest, options?: RequestInit): Promise<updateApplicationResponse> => {
-  
+
   return apiFetch<updateApplicationResponse>(getUpdateApplicationUrl(id),
-  {      
+  {
     ...options,
     method: 'PUT',
     headers: { 'Content-Type': 'application/json', ...options?.headers },
@@ -274,7 +274,7 @@ const {mutation: mutationOptions, request: requestOptions} = options ?
       : {...options, mutation: {...options.mutation, mutationKey}}
       : {mutation: { mutationKey, }, request: undefined};
 
-      
+
 
 
       const mutationFn: MutationFunction<Awaited<ReturnType<typeof updateApplication>>, {id: string;data: ApplicationRequest}> = (props) => {
@@ -283,7 +283,7 @@ const {mutation: mutationOptions, request: requestOptions} = options ?
           return  updateApplication(id,data,requestOptions)
         }
 
-        
+
 
 
   return  { mutationFn, ...mutationOptions }}
@@ -305,4 +305,79 @@ const {mutation: mutationOptions, request: requestOptions} = options ?
 
       return useMutation(mutationOptions, queryClient);
     }
-    
+    export type deleteApplicationResponse204 = {
+  data: void
+  status: 204
+}
+
+export type deleteApplicationResponseSuccess = (deleteApplicationResponse204) & {
+  headers: Headers;
+};
+;
+
+export type deleteApplicationResponse = (deleteApplicationResponseSuccess)
+
+export const getDeleteApplicationUrl = (id: string,) => {
+
+
+
+
+  return `/api/applications/${id}`
+}
+
+export const deleteApplication = async (id: string, options?: RequestInit): Promise<deleteApplicationResponse> => {
+
+  return apiFetch<deleteApplicationResponse>(getDeleteApplicationUrl(id),
+  {
+    ...options,
+    method: 'DELETE'
+
+
+  }
+);}
+
+
+
+
+export const getDeleteApplicationMutationOptions = <TError = unknown,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof deleteApplication>>, TError,{id: string}, TContext>, request?: SecondParameter<typeof apiFetch>}
+): UseMutationOptions<Awaited<ReturnType<typeof deleteApplication>>, TError,{id: string}, TContext> => {
+
+const mutationKey = ['deleteApplication'];
+const {mutation: mutationOptions, request: requestOptions} = options ?
+      options.mutation && 'mutationKey' in options.mutation && options.mutation.mutationKey ?
+      options
+      : {...options, mutation: {...options.mutation, mutationKey}}
+      : {mutation: { mutationKey, }, request: undefined};
+
+
+
+
+      const mutationFn: MutationFunction<Awaited<ReturnType<typeof deleteApplication>>, {id: string}> = (props) => {
+          const {id} = props ?? {};
+
+          return  deleteApplication(id,requestOptions)
+        }
+
+
+
+
+  return  { mutationFn, ...mutationOptions }}
+
+    export type DeleteApplicationMutationResult = NonNullable<Awaited<ReturnType<typeof deleteApplication>>>
+
+    export type DeleteApplicationMutationError = unknown
+
+    export const useDeleteApplication = <TError = unknown,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof deleteApplication>>, TError,{id: string}, TContext>, request?: SecondParameter<typeof apiFetch>}
+ , queryClient?: QueryClient): UseMutationResult<
+        Awaited<ReturnType<typeof deleteApplication>>,
+        TError,
+        {id: string},
+        TContext
+      > => {
+
+      const mutationOptions = getDeleteApplicationMutationOptions(options);
+
+      return useMutation(mutationOptions, queryClient);
+    }

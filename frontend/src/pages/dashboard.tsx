@@ -1,9 +1,10 @@
-import { ArrowUpRight, BriefcaseBusiness, CalendarCheck, Clock3, Sparkles, Building2, MapPin, Bookmark, type LucideIcon } from 'lucide-react'
+import { ArrowUpRight, BriefcaseBusiness, CalendarCheck, Clock3, Sparkles, Building2, MapPin, type LucideIcon } from 'lucide-react'
 import { useGetDashboard, useGetReminders } from '@/api/generated/discovery/discovery'
 import { useListResumes } from '@/api/generated/resumes/resumes'
 import type { JobSummary } from '@/api/generated/model'
 import { Page } from '@/components/page'
 import { Badge, Button, ErrorState, Skeleton } from '@/components/ui'
+import { ApplyToJobButton, SaveJobButton } from '@/components/job-tracking-actions'
 import { formatDate, scoreTone } from '@/lib/utils'
 
 export default function DashboardPage() {
@@ -30,5 +31,5 @@ export default function DashboardPage() {
 }
 
 function MatchCard({ job }: { job: JobSummary }) {
-  return <article className="panel group p-4 transition-shadow hover:shadow-md"><div className="flex items-start gap-3"><div className="grid size-10 shrink-0 place-items-center rounded-lg bg-zinc-100 font-semibold dark:bg-zinc-800">{job.company[0]}</div><div className="min-w-0 flex-1"><p className="text-xs muted">{job.company}</p><h3 className="truncate font-semibold">{job.title}</h3><div className="mt-2 flex flex-wrap gap-1.5"><Badge className={scoreTone(job.overallScore)}>{job.overallScore}% match</Badge>{job.remote && <Badge>Remote</Badge>}<span className="inline-flex items-center gap-1 text-xs muted"><MapPin className="size-3" />{job.location || 'Flexible'}</span></div></div></div><div className="mt-4 flex items-center justify-between border-t pt-3"><span className="text-xs muted">Posted {formatDate(job.postedDate)}</span><div className="flex gap-2"><Button aria-label={`Save ${job.title}`}><Bookmark className="size-3" /></Button><a className="btn" href={`/jobs?job=${job.id}`}>View & tailor</a><a className="btn btn-primary" href={job.applyUrl} target="_blank" rel="noreferrer">Apply <ArrowUpRight className="size-3" /></a></div></div></article>
+  return <article className="panel group p-4 transition-shadow hover:shadow-md"><div className="flex items-start gap-3"><div className="grid size-10 shrink-0 place-items-center rounded-lg bg-zinc-100 font-semibold dark:bg-zinc-800">{job.company[0]}</div><div className="min-w-0 flex-1"><p className="text-xs muted">{job.company}</p><h3 className="truncate font-semibold">{job.title}</h3><div className="mt-2 flex flex-wrap gap-1.5"><Badge className={scoreTone(job.overallScore)}>{job.overallScore}% match</Badge>{job.remote && <Badge>Remote</Badge>}<span className="inline-flex items-center gap-1 text-xs muted"><MapPin className="size-3" />{job.location || 'Flexible'}</span></div></div></div><div className="mt-4 flex items-center justify-between border-t pt-3"><span className="text-xs muted">Posted {formatDate(job.postedDate)}</span><div className="flex gap-2"><SaveJobButton job={job}/><a className="btn" href={`/jobs?job=${job.id}`}>View & tailor</a><ApplyToJobButton job={job}/></div></div></article>
 }

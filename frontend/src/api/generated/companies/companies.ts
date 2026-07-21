@@ -41,7 +41,7 @@ export type listCompaniesResponse200 = {
   data: CompanyPage
   status: 200
 }
-    
+
 export type listCompaniesResponseSuccess = (listCompaniesResponse200) & {
   headers: Headers;
 };
@@ -53,7 +53,7 @@ export const getListCompaniesUrl = (params?: ListCompaniesParams,) => {
   const normalizedParams = new URLSearchParams();
 
   Object.entries(params || {}).forEach(([key, value]) => {
-    
+
     if (value !== undefined) {
       normalizedParams.append(key, value === null ? 'null' : value.toString())
     }
@@ -65,13 +65,13 @@ export const getListCompaniesUrl = (params?: ListCompaniesParams,) => {
 }
 
 export const listCompanies = async (params?: ListCompaniesParams, options?: RequestInit): Promise<listCompaniesResponse> => {
-  
+
   return apiFetch<listCompaniesResponse>(getListCompaniesUrl(params),
-  {      
+  {
     ...options,
     method: 'GET'
-    
-    
+
+
   }
 );}
 
@@ -85,7 +85,7 @@ export const getListCompaniesQueryKey = (params?: ListCompaniesParams,) => {
     ] as const;
     }
 
-    
+
 export const getListCompaniesQueryOptions = <TData = Awaited<ReturnType<typeof listCompanies>>, TError = unknown>(params?: ListCompaniesParams, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof listCompanies>>, TError, TData>>, request?: SecondParameter<typeof apiFetch>}
 ) => {
 
@@ -93,13 +93,13 @@ const {query: queryOptions, request: requestOptions} = options ?? {};
 
   const queryKey =  queryOptions?.queryKey ?? getListCompaniesQueryKey(params);
 
-  
+
 
     const queryFn: QueryFunction<Awaited<ReturnType<typeof listCompanies>>> = ({ signal }) => listCompanies(params, { signal, ...requestOptions });
 
-      
 
-      
+
+
 
    return  { queryKey, queryFn, ...queryOptions} as UseQueryOptions<Awaited<ReturnType<typeof listCompanies>>, TError, TData> & { queryKey: DataTag<QueryKey, TData> }
 }
@@ -135,7 +135,7 @@ export function useListCompanies<TData = Awaited<ReturnType<typeof listCompanies
 
 export function useListCompanies<TData = Awaited<ReturnType<typeof listCompanies>>, TError = unknown>(
  params?: ListCompaniesParams, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof listCompanies>>, TError, TData>>, request?: SecondParameter<typeof apiFetch>}
- , queryClient?: QueryClient 
+ , queryClient?: QueryClient
  ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData> } {
 
   const queryOptions = getListCompaniesQueryOptions(params,options)
@@ -154,7 +154,7 @@ export type createCompanyResponse201 = {
   data: Company
   status: 201
 }
-    
+
 export type createCompanyResponseSuccess = (createCompanyResponse201) & {
   headers: Headers;
 };
@@ -165,15 +165,15 @@ export type createCompanyResponse = (createCompanyResponseSuccess)
 export const getCreateCompanyUrl = () => {
 
 
-  
+
 
   return `/api/v1/companies`
 }
 
 export const createCompany = async (companyRequest: CompanyRequest, options?: RequestInit): Promise<createCompanyResponse> => {
-  
+
   return apiFetch<createCompanyResponse>(getCreateCompanyUrl(),
-  {      
+  {
     ...options,
     method: 'POST',
     headers: { 'Content-Type': 'application/json', ...options?.headers },
@@ -196,7 +196,7 @@ const {mutation: mutationOptions, request: requestOptions} = options ?
       : {...options, mutation: {...options.mutation, mutationKey}}
       : {mutation: { mutationKey, }, request: undefined};
 
-      
+
 
 
       const mutationFn: MutationFunction<Awaited<ReturnType<typeof createCompany>>, {data: CompanyRequest}> = (props) => {
@@ -205,7 +205,7 @@ const {mutation: mutationOptions, request: requestOptions} = options ?
           return  createCompany(data,requestOptions)
         }
 
-        
+
 
 
   return  { mutationFn, ...mutationOptions }}
@@ -231,7 +231,7 @@ const {mutation: mutationOptions, request: requestOptions} = options ?
   data: Company
   status: 200
 }
-    
+
 export type updateCompanyResponseSuccess = (updateCompanyResponse200) & {
   headers: Headers;
 };
@@ -242,16 +242,16 @@ export type updateCompanyResponse = (updateCompanyResponseSuccess)
 export const getUpdateCompanyUrl = (id: string,) => {
 
 
-  
+
 
   return `/api/v1/companies/${id}`
 }
 
 export const updateCompany = async (id: string,
     companyRequest: CompanyRequest, options?: RequestInit): Promise<updateCompanyResponse> => {
-  
+
   return apiFetch<updateCompanyResponse>(getUpdateCompanyUrl(id),
-  {      
+  {
     ...options,
     method: 'PUT',
     headers: { 'Content-Type': 'application/json', ...options?.headers },
@@ -274,7 +274,7 @@ const {mutation: mutationOptions, request: requestOptions} = options ?
       : {...options, mutation: {...options.mutation, mutationKey}}
       : {mutation: { mutationKey, }, request: undefined};
 
-      
+
 
 
       const mutationFn: MutationFunction<Awaited<ReturnType<typeof updateCompany>>, {id: string;data: CompanyRequest}> = (props) => {
@@ -283,7 +283,7 @@ const {mutation: mutationOptions, request: requestOptions} = options ?
           return  updateCompany(id,data,requestOptions)
         }
 
-        
+
 
 
   return  { mutationFn, ...mutationOptions }}
@@ -309,7 +309,7 @@ const {mutation: mutationOptions, request: requestOptions} = options ?
   data: void
   status: 204
 }
-    
+
 export type deleteCompanyResponseSuccess = (deleteCompanyResponse204) & {
   headers: Headers;
 };
@@ -320,19 +320,19 @@ export type deleteCompanyResponse = (deleteCompanyResponseSuccess)
 export const getDeleteCompanyUrl = (id: string,) => {
 
 
-  
+
 
   return `/api/v1/companies/${id}`
 }
 
 export const deleteCompany = async (id: string, options?: RequestInit): Promise<deleteCompanyResponse> => {
-  
+
   return apiFetch<deleteCompanyResponse>(getDeleteCompanyUrl(id),
-  {      
+  {
     ...options,
     method: 'DELETE'
-    
-    
+
+
   }
 );}
 
@@ -350,7 +350,7 @@ const {mutation: mutationOptions, request: requestOptions} = options ?
       : {...options, mutation: {...options.mutation, mutationKey}}
       : {mutation: { mutationKey, }, request: undefined};
 
-      
+
 
 
       const mutationFn: MutationFunction<Awaited<ReturnType<typeof deleteCompany>>, {id: string}> = (props) => {
@@ -359,13 +359,13 @@ const {mutation: mutationOptions, request: requestOptions} = options ?
           return  deleteCompany(id,requestOptions)
         }
 
-        
+
 
 
   return  { mutationFn, ...mutationOptions }}
 
     export type DeleteCompanyMutationResult = NonNullable<Awaited<ReturnType<typeof deleteCompany>>>
-    
+
     export type DeleteCompanyMutationError = unknown
 
     export const useDeleteCompany = <TError = unknown,
@@ -381,4 +381,3 @@ const {mutation: mutationOptions, request: requestOptions} = options ?
 
       return useMutation(mutationOptions, queryClient);
     }
-    

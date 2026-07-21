@@ -9,6 +9,10 @@ import type { ApplicationStatus } from './applicationStatus';
 export interface Application {
   id?: string;
   jobPostingId?: string;
+  jobTitle?: string;
+  company?: string;
+  location?: string;
+  remote?: boolean;
   status?: ApplicationStatus;
   appliedDate?: string;
   followUpDate?: string;

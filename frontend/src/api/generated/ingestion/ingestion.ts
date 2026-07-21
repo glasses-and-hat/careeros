@@ -29,7 +29,7 @@ export type runIngestionResponse200 = {
   data: IngestionRun
   status: 200
 }
-    
+
 export type runIngestionResponseSuccess = (runIngestionResponse200) & {
   headers: Headers;
 };
@@ -40,19 +40,19 @@ export type runIngestionResponse = (runIngestionResponseSuccess)
 export const getRunIngestionUrl = () => {
 
 
-  
+
 
   return `/api/v1/ingestion/runs`
 }
 
 export const runIngestion = async ( options?: RequestInit): Promise<runIngestionResponse> => {
-  
+
   return apiFetch<runIngestionResponse>(getRunIngestionUrl(),
-  {      
+  {
     ...options,
     method: 'POST'
-    
-    
+
+
   }
 );}
 
@@ -70,22 +70,22 @@ const {mutation: mutationOptions, request: requestOptions} = options ?
       : {...options, mutation: {...options.mutation, mutationKey}}
       : {mutation: { mutationKey, }, request: undefined};
 
-      
+
 
 
       const mutationFn: MutationFunction<Awaited<ReturnType<typeof runIngestion>>, void> = () => {
-          
+
 
           return  runIngestion(requestOptions)
         }
 
-        
+
 
 
   return  { mutationFn, ...mutationOptions }}
 
     export type RunIngestionMutationResult = NonNullable<Awaited<ReturnType<typeof runIngestion>>>
-    
+
     export type RunIngestionMutationError = unknown
 
     export const useRunIngestion = <TError = unknown,
@@ -105,7 +105,7 @@ const {mutation: mutationOptions, request: requestOptions} = options ?
   data: IngestionRun
   status: 200
 }
-    
+
 export type runCompanyIngestionResponseSuccess = (runCompanyIngestionResponse200) & {
   headers: Headers;
 };
@@ -116,19 +116,19 @@ export type runCompanyIngestionResponse = (runCompanyIngestionResponseSuccess)
 export const getRunCompanyIngestionUrl = (companyId: string,) => {
 
 
-  
+
 
   return `/api/v1/ingestion/companies/${companyId}/runs`
 }
 
 export const runCompanyIngestion = async (companyId: string, options?: RequestInit): Promise<runCompanyIngestionResponse> => {
-  
+
   return apiFetch<runCompanyIngestionResponse>(getRunCompanyIngestionUrl(companyId),
-  {      
+  {
     ...options,
     method: 'POST'
-    
-    
+
+
   }
 );}
 
@@ -146,7 +146,7 @@ const {mutation: mutationOptions, request: requestOptions} = options ?
       : {...options, mutation: {...options.mutation, mutationKey}}
       : {mutation: { mutationKey, }, request: undefined};
 
-      
+
 
 
       const mutationFn: MutationFunction<Awaited<ReturnType<typeof runCompanyIngestion>>, {companyId: string}> = (props) => {
@@ -155,13 +155,13 @@ const {mutation: mutationOptions, request: requestOptions} = options ?
           return  runCompanyIngestion(companyId,requestOptions)
         }
 
-        
+
 
 
   return  { mutationFn, ...mutationOptions }}
 
     export type RunCompanyIngestionMutationResult = NonNullable<Awaited<ReturnType<typeof runCompanyIngestion>>>
-    
+
     export type RunCompanyIngestionMutationError = unknown
 
     export const useRunCompanyIngestion = <TError = unknown,
@@ -177,4 +177,3 @@ const {mutation: mutationOptions, request: requestOptions} = options ?
 
       return useMutation(mutationOptions, queryClient);
     }
-    

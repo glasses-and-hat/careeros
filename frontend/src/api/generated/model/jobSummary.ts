@@ -4,6 +4,7 @@
  * CareerOS API
  * OpenAPI spec version: 0.4.0
  */
+import type { ApplicationStatus } from './applicationStatus';
 
 export interface JobSummary {
   id: string;
@@ -20,4 +21,5 @@ export interface JobSummary {
   companyPriorityScore?: number;
   recencyScore?: number;
   matchExplanation?: string[];
+  applicationStatus?: ApplicationStatus;
 }

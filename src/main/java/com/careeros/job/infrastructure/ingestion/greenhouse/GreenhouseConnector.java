@@ -7,10 +7,12 @@ import com.careeros.job.application.JobPostingCommand;
 import com.careeros.job.application.ingestion.AtsConnector;
 import com.careeros.job.infrastructure.ingestion.support.AtsDateParser;
 import com.careeros.job.infrastructure.ingestion.support.EmploymentTypeParser;
+import com.careeros.job.infrastructure.ingestion.support.IngestionHttpRetry;
 import com.careeros.job.infrastructure.ingestion.support.RemoteHeuristic;
 import org.springframework.stereotype.Component;
 import org.springframework.web.client.RestClient;
 
+import java.time.Duration;
 import java.util.List;
 
 /**
@@ -37,10 +39,11 @@ class GreenhouseConnector implements AtsConnector {
 
     @Override
     public List<JobPostingCommand> fetchJobs(Company company) {
-        GreenhouseJobsResponse response = restClient.get()
-                .uri("/{token}/jobs?content=true", company.getAtsIdentifier())
-                .retrieve()
-                .body(GreenhouseJobsResponse.class);
+        GreenhouseJobsResponse response = IngestionHttpRetry.execute(3, Duration.ofMillis(250),
+                () -> restClient.get()
+                        .uri("/{token}/jobs?content=true", company.getAtsIdentifier())
+                        .retrieve()
+                        .body(GreenhouseJobsResponse.class));
 
         if (response == null || response.jobs() == null) {
             return List.of();

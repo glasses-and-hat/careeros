@@ -38,7 +38,7 @@ export type getDashboardResponse200 = {
   data: Dashboard
   status: 200
 }
-    
+
 export type getDashboardResponseSuccess = (getDashboardResponse200) & {
   headers: Headers;
 };
@@ -49,19 +49,19 @@ export type getDashboardResponse = (getDashboardResponseSuccess)
 export const getGetDashboardUrl = () => {
 
 
-  
+
 
   return `/api/dashboard`
 }
 
 export const getDashboard = async ( options?: RequestInit): Promise<getDashboardResponse> => {
-  
+
   return apiFetch<getDashboardResponse>(getGetDashboardUrl(),
-  {      
+  {
     ...options,
     method: 'GET'
-    
-    
+
+
   }
 );}
 
@@ -75,7 +75,7 @@ export const getGetDashboardQueryKey = () => {
     ] as const;
     }
 
-    
+
 export const getGetDashboardQueryOptions = <TData = Awaited<ReturnType<typeof getDashboard>>, TError = unknown>( options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getDashboard>>, TError, TData>>, request?: SecondParameter<typeof apiFetch>}
 ) => {
 
@@ -83,13 +83,13 @@ const {query: queryOptions, request: requestOptions} = options ?? {};
 
   const queryKey =  queryOptions?.queryKey ?? getGetDashboardQueryKey();
 
-  
+
 
     const queryFn: QueryFunction<Awaited<ReturnType<typeof getDashboard>>> = ({ signal }) => getDashboard({ signal, ...requestOptions });
 
-      
 
-      
+
+
 
    return  { queryKey, queryFn, ...queryOptions} as UseQueryOptions<Awaited<ReturnType<typeof getDashboard>>, TError, TData> & { queryKey: DataTag<QueryKey, TData> }
 }
@@ -125,7 +125,7 @@ export function useGetDashboard<TData = Awaited<ReturnType<typeof getDashboard>>
 
 export function useGetDashboard<TData = Awaited<ReturnType<typeof getDashboard>>, TError = unknown>(
   options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getDashboard>>, TError, TData>>, request?: SecondParameter<typeof apiFetch>}
- , queryClient?: QueryClient 
+ , queryClient?: QueryClient
  ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData> } {
 
   const queryOptions = getGetDashboardQueryOptions(options)
@@ -144,7 +144,7 @@ export type getRemindersResponse200 = {
   data: Reminder[]
   status: 200
 }
-    
+
 export type getRemindersResponseSuccess = (getRemindersResponse200) & {
   headers: Headers;
 };
@@ -155,19 +155,19 @@ export type getRemindersResponse = (getRemindersResponseSuccess)
 export const getGetRemindersUrl = () => {
 
 
-  
+
 
   return `/api/reminders`
 }
 
 export const getReminders = async ( options?: RequestInit): Promise<getRemindersResponse> => {
-  
+
   return apiFetch<getRemindersResponse>(getGetRemindersUrl(),
-  {      
+  {
     ...options,
     method: 'GET'
-    
-    
+
+
   }
 );}
 
@@ -181,7 +181,7 @@ export const getGetRemindersQueryKey = () => {
     ] as const;
     }
 
-    
+
 export const getGetRemindersQueryOptions = <TData = Awaited<ReturnType<typeof getReminders>>, TError = unknown>( options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getReminders>>, TError, TData>>, request?: SecondParameter<typeof apiFetch>}
 ) => {
 
@@ -189,13 +189,13 @@ const {query: queryOptions, request: requestOptions} = options ?? {};
 
   const queryKey =  queryOptions?.queryKey ?? getGetRemindersQueryKey();
 
-  
+
 
     const queryFn: QueryFunction<Awaited<ReturnType<typeof getReminders>>> = ({ signal }) => getReminders({ signal, ...requestOptions });
 
-      
 
-      
+
+
 
    return  { queryKey, queryFn, ...queryOptions} as UseQueryOptions<Awaited<ReturnType<typeof getReminders>>, TError, TData> & { queryKey: DataTag<QueryKey, TData> }
 }
@@ -231,7 +231,7 @@ export function useGetReminders<TData = Awaited<ReturnType<typeof getReminders>>
 
 export function useGetReminders<TData = Awaited<ReturnType<typeof getReminders>>, TError = unknown>(
   options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getReminders>>, TError, TData>>, request?: SecondParameter<typeof apiFetch>}
- , queryClient?: QueryClient 
+ , queryClient?: QueryClient
  ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData> } {
 
   const queryOptions = getGetRemindersQueryOptions(options)
@@ -250,7 +250,7 @@ export type getAnalyticsResponse200 = {
   data: Analytics
   status: 200
 }
-    
+
 export type getAnalyticsResponseSuccess = (getAnalyticsResponse200) & {
   headers: Headers;
 };
@@ -261,19 +261,19 @@ export type getAnalyticsResponse = (getAnalyticsResponseSuccess)
 export const getGetAnalyticsUrl = () => {
 
 
-  
+
 
   return `/api/analytics`
 }
 
 export const getAnalytics = async ( options?: RequestInit): Promise<getAnalyticsResponse> => {
-  
+
   return apiFetch<getAnalyticsResponse>(getGetAnalyticsUrl(),
-  {      
+  {
     ...options,
     method: 'GET'
-    
-    
+
+
   }
 );}
 
@@ -287,7 +287,7 @@ export const getGetAnalyticsQueryKey = () => {
     ] as const;
     }
 
-    
+
 export const getGetAnalyticsQueryOptions = <TData = Awaited<ReturnType<typeof getAnalytics>>, TError = unknown>( options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getAnalytics>>, TError, TData>>, request?: SecondParameter<typeof apiFetch>}
 ) => {
 
@@ -295,13 +295,13 @@ const {query: queryOptions, request: requestOptions} = options ?? {};
 
   const queryKey =  queryOptions?.queryKey ?? getGetAnalyticsQueryKey();
 
-  
+
 
     const queryFn: QueryFunction<Awaited<ReturnType<typeof getAnalytics>>> = ({ signal }) => getAnalytics({ signal, ...requestOptions });
 
-      
 
-      
+
+
 
    return  { queryKey, queryFn, ...queryOptions} as UseQueryOptions<Awaited<ReturnType<typeof getAnalytics>>, TError, TData> & { queryKey: DataTag<QueryKey, TData> }
 }
@@ -337,7 +337,7 @@ export function useGetAnalytics<TData = Awaited<ReturnType<typeof getAnalytics>>
 
 export function useGetAnalytics<TData = Awaited<ReturnType<typeof getAnalytics>>, TError = unknown>(
   options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getAnalytics>>, TError, TData>>, request?: SecondParameter<typeof apiFetch>}
- , queryClient?: QueryClient 
+ , queryClient?: QueryClient
  ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData> } {
 
   const queryOptions = getGetAnalyticsQueryOptions(options)
@@ -356,7 +356,7 @@ export type getJobTimelineResponse200 = {
   data: JobPage
   status: 200
 }
-    
+
 export type getJobTimelineResponseSuccess = (getJobTimelineResponse200) & {
   headers: Headers;
 };
@@ -368,7 +368,7 @@ export const getGetJobTimelineUrl = (params?: GetJobTimelineParams,) => {
   const normalizedParams = new URLSearchParams();
 
   Object.entries(params || {}).forEach(([key, value]) => {
-    
+
     if (value !== undefined) {
       normalizedParams.append(key, value === null ? 'null' : value.toString())
     }
@@ -380,13 +380,13 @@ export const getGetJobTimelineUrl = (params?: GetJobTimelineParams,) => {
 }
 
 export const getJobTimeline = async (params?: GetJobTimelineParams, options?: RequestInit): Promise<getJobTimelineResponse> => {
-  
+
   return apiFetch<getJobTimelineResponse>(getGetJobTimelineUrl(params),
-  {      
+  {
     ...options,
     method: 'GET'
-    
-    
+
+
   }
 );}
 
@@ -400,7 +400,7 @@ export const getGetJobTimelineQueryKey = (params?: GetJobTimelineParams,) => {
     ] as const;
     }
 
-    
+
 export const getGetJobTimelineQueryOptions = <TData = Awaited<ReturnType<typeof getJobTimeline>>, TError = unknown>(params?: GetJobTimelineParams, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getJobTimeline>>, TError, TData>>, request?: SecondParameter<typeof apiFetch>}
 ) => {
 
@@ -408,13 +408,13 @@ const {query: queryOptions, request: requestOptions} = options ?? {};
 
   const queryKey =  queryOptions?.queryKey ?? getGetJobTimelineQueryKey(params);
 
-  
+
 
     const queryFn: QueryFunction<Awaited<ReturnType<typeof getJobTimeline>>> = ({ signal }) => getJobTimeline(params, { signal, ...requestOptions });
 
-      
 
-      
+
+
 
    return  { queryKey, queryFn, ...queryOptions} as UseQueryOptions<Awaited<ReturnType<typeof getJobTimeline>>, TError, TData> & { queryKey: DataTag<QueryKey, TData> }
 }
@@ -450,7 +450,7 @@ export function useGetJobTimeline<TData = Awaited<ReturnType<typeof getJobTimeli
 
 export function useGetJobTimeline<TData = Awaited<ReturnType<typeof getJobTimeline>>, TError = unknown>(
  params?: GetJobTimelineParams, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getJobTimeline>>, TError, TData>>, request?: SecondParameter<typeof apiFetch>}
- , queryClient?: QueryClient 
+ , queryClient?: QueryClient
  ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData> } {
 
   const queryOptions = getGetJobTimelineQueryOptions(params,options)

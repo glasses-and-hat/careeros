@@ -43,7 +43,7 @@ export type listWatchlistsResponse200 = {
   data: WatchlistPage
   status: 200
 }
-    
+
 export type listWatchlistsResponseSuccess = (listWatchlistsResponse200) & {
   headers: Headers;
 };
@@ -55,7 +55,7 @@ export const getListWatchlistsUrl = (params?: ListWatchlistsParams,) => {
   const normalizedParams = new URLSearchParams();
 
   Object.entries(params || {}).forEach(([key, value]) => {
-    
+
     if (value !== undefined) {
       normalizedParams.append(key, value === null ? 'null' : value.toString())
     }
@@ -67,13 +67,13 @@ export const getListWatchlistsUrl = (params?: ListWatchlistsParams,) => {
 }
 
 export const listWatchlists = async (params?: ListWatchlistsParams, options?: RequestInit): Promise<listWatchlistsResponse> => {
-  
+
   return apiFetch<listWatchlistsResponse>(getListWatchlistsUrl(params),
-  {      
+  {
     ...options,
     method: 'GET'
-    
-    
+
+
   }
 );}
 
@@ -87,7 +87,7 @@ export const getListWatchlistsQueryKey = (params?: ListWatchlistsParams,) => {
     ] as const;
     }
 
-    
+
 export const getListWatchlistsQueryOptions = <TData = Awaited<ReturnType<typeof listWatchlists>>, TError = unknown>(params?: ListWatchlistsParams, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof listWatchlists>>, TError, TData>>, request?: SecondParameter<typeof apiFetch>}
 ) => {
 
@@ -95,13 +95,13 @@ const {query: queryOptions, request: requestOptions} = options ?? {};
 
   const queryKey =  queryOptions?.queryKey ?? getListWatchlistsQueryKey(params);
 
-  
+
 
     const queryFn: QueryFunction<Awaited<ReturnType<typeof listWatchlists>>> = ({ signal }) => listWatchlists(params, { signal, ...requestOptions });
 
-      
 
-      
+
+
 
    return  { queryKey, queryFn, ...queryOptions} as UseQueryOptions<Awaited<ReturnType<typeof listWatchlists>>, TError, TData> & { queryKey: DataTag<QueryKey, TData> }
 }
@@ -137,7 +137,7 @@ export function useListWatchlists<TData = Awaited<ReturnType<typeof listWatchlis
 
 export function useListWatchlists<TData = Awaited<ReturnType<typeof listWatchlists>>, TError = unknown>(
  params?: ListWatchlistsParams, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof listWatchlists>>, TError, TData>>, request?: SecondParameter<typeof apiFetch>}
- , queryClient?: QueryClient 
+ , queryClient?: QueryClient
  ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData> } {
 
   const queryOptions = getListWatchlistsQueryOptions(params,options)
@@ -156,7 +156,7 @@ export type createWatchlistResponse200 = {
   data: Watchlist
   status: 200
 }
-    
+
 export type createWatchlistResponseSuccess = (createWatchlistResponse200) & {
   headers: Headers;
 };
@@ -167,15 +167,15 @@ export type createWatchlistResponse = (createWatchlistResponseSuccess)
 export const getCreateWatchlistUrl = () => {
 
 
-  
+
 
   return `/api/watchlists`
 }
 
 export const createWatchlist = async (createWatchlistBody: CreateWatchlistBody, options?: RequestInit): Promise<createWatchlistResponse> => {
-  
+
   return apiFetch<createWatchlistResponse>(getCreateWatchlistUrl(),
-  {      
+  {
     ...options,
     method: 'POST',
     headers: { 'Content-Type': 'application/json', ...options?.headers },
@@ -198,7 +198,7 @@ const {mutation: mutationOptions, request: requestOptions} = options ?
       : {...options, mutation: {...options.mutation, mutationKey}}
       : {mutation: { mutationKey, }, request: undefined};
 
-      
+
 
 
       const mutationFn: MutationFunction<Awaited<ReturnType<typeof createWatchlist>>, {data: CreateWatchlistBody}> = (props) => {
@@ -207,7 +207,7 @@ const {mutation: mutationOptions, request: requestOptions} = options ?
           return  createWatchlist(data,requestOptions)
         }
 
-        
+
 
 
   return  { mutationFn, ...mutationOptions }}
@@ -233,7 +233,7 @@ const {mutation: mutationOptions, request: requestOptions} = options ?
   data: Watchlist
   status: 200
 }
-    
+
 export type renameWatchlistResponseSuccess = (renameWatchlistResponse200) & {
   headers: Headers;
 };
@@ -244,16 +244,16 @@ export type renameWatchlistResponse = (renameWatchlistResponseSuccess)
 export const getRenameWatchlistUrl = (id: string,) => {
 
 
-  
+
 
   return `/api/watchlists/${id}`
 }
 
 export const renameWatchlist = async (id: string,
     watchlistName: WatchlistName, options?: RequestInit): Promise<renameWatchlistResponse> => {
-  
+
   return apiFetch<renameWatchlistResponse>(getRenameWatchlistUrl(id),
-  {      
+  {
     ...options,
     method: 'PUT',
     headers: { 'Content-Type': 'application/json', ...options?.headers },
@@ -276,7 +276,7 @@ const {mutation: mutationOptions, request: requestOptions} = options ?
       : {...options, mutation: {...options.mutation, mutationKey}}
       : {mutation: { mutationKey, }, request: undefined};
 
-      
+
 
 
       const mutationFn: MutationFunction<Awaited<ReturnType<typeof renameWatchlist>>, {id: string;data: WatchlistName}> = (props) => {
@@ -285,7 +285,7 @@ const {mutation: mutationOptions, request: requestOptions} = options ?
           return  renameWatchlist(id,data,requestOptions)
         }
 
-        
+
 
 
   return  { mutationFn, ...mutationOptions }}
@@ -311,7 +311,7 @@ const {mutation: mutationOptions, request: requestOptions} = options ?
   data: void
   status: 204
 }
-    
+
 export type deleteWatchlistResponseSuccess = (deleteWatchlistResponse204) & {
   headers: Headers;
 };
@@ -322,19 +322,19 @@ export type deleteWatchlistResponse = (deleteWatchlistResponseSuccess)
 export const getDeleteWatchlistUrl = (id: string,) => {
 
 
-  
+
 
   return `/api/watchlists/${id}`
 }
 
 export const deleteWatchlist = async (id: string, options?: RequestInit): Promise<deleteWatchlistResponse> => {
-  
+
   return apiFetch<deleteWatchlistResponse>(getDeleteWatchlistUrl(id),
-  {      
+  {
     ...options,
     method: 'DELETE'
-    
-    
+
+
   }
 );}
 
@@ -352,7 +352,7 @@ const {mutation: mutationOptions, request: requestOptions} = options ?
       : {...options, mutation: {...options.mutation, mutationKey}}
       : {mutation: { mutationKey, }, request: undefined};
 
-      
+
 
 
       const mutationFn: MutationFunction<Awaited<ReturnType<typeof deleteWatchlist>>, {id: string}> = (props) => {
@@ -361,13 +361,13 @@ const {mutation: mutationOptions, request: requestOptions} = options ?
           return  deleteWatchlist(id,requestOptions)
         }
 
-        
+
 
 
   return  { mutationFn, ...mutationOptions }}
 
     export type DeleteWatchlistMutationResult = NonNullable<Awaited<ReturnType<typeof deleteWatchlist>>>
-    
+
     export type DeleteWatchlistMutationError = unknown
 
     export const useDeleteWatchlist = <TError = unknown,
@@ -387,7 +387,7 @@ const {mutation: mutationOptions, request: requestOptions} = options ?
   data: Watchlist
   status: 200
 }
-    
+
 export type addCompanyToWatchlistResponseSuccess = (addCompanyToWatchlistResponse200) & {
   headers: Headers;
 };
@@ -399,7 +399,7 @@ export const getAddCompanyToWatchlistUrl = (id: string,
     companyId: string,) => {
 
 
-  
+
 
   return `/api/watchlists/${id}/companies/${companyId}`
 }
@@ -407,9 +407,9 @@ export const getAddCompanyToWatchlistUrl = (id: string,
 export const addCompanyToWatchlist = async (id: string,
     companyId: string,
     watchlistMembership: WatchlistMembership, options?: RequestInit): Promise<addCompanyToWatchlistResponse> => {
-  
+
   return apiFetch<addCompanyToWatchlistResponse>(getAddCompanyToWatchlistUrl(id,companyId),
-  {      
+  {
     ...options,
     method: 'PUT',
     headers: { 'Content-Type': 'application/json', ...options?.headers },
@@ -432,7 +432,7 @@ const {mutation: mutationOptions, request: requestOptions} = options ?
       : {...options, mutation: {...options.mutation, mutationKey}}
       : {mutation: { mutationKey, }, request: undefined};
 
-      
+
 
 
       const mutationFn: MutationFunction<Awaited<ReturnType<typeof addCompanyToWatchlist>>, {id: string;companyId: string;data: WatchlistMembership}> = (props) => {
@@ -441,7 +441,7 @@ const {mutation: mutationOptions, request: requestOptions} = options ?
           return  addCompanyToWatchlist(id,companyId,data,requestOptions)
         }
 
-        
+
 
 
   return  { mutationFn, ...mutationOptions }}
@@ -467,7 +467,7 @@ const {mutation: mutationOptions, request: requestOptions} = options ?
   data: Watchlist
   status: 200
 }
-    
+
 export type removeCompanyFromWatchlistResponseSuccess = (removeCompanyFromWatchlistResponse200) & {
   headers: Headers;
 };
@@ -479,20 +479,20 @@ export const getRemoveCompanyFromWatchlistUrl = (id: string,
     companyId: string,) => {
 
 
-  
+
 
   return `/api/watchlists/${id}/companies/${companyId}`
 }
 
 export const removeCompanyFromWatchlist = async (id: string,
     companyId: string, options?: RequestInit): Promise<removeCompanyFromWatchlistResponse> => {
-  
+
   return apiFetch<removeCompanyFromWatchlistResponse>(getRemoveCompanyFromWatchlistUrl(id,companyId),
-  {      
+  {
     ...options,
     method: 'DELETE'
-    
-    
+
+
   }
 );}
 
@@ -510,7 +510,7 @@ const {mutation: mutationOptions, request: requestOptions} = options ?
       : {...options, mutation: {...options.mutation, mutationKey}}
       : {mutation: { mutationKey, }, request: undefined};
 
-      
+
 
 
       const mutationFn: MutationFunction<Awaited<ReturnType<typeof removeCompanyFromWatchlist>>, {id: string;companyId: string}> = (props) => {
@@ -519,13 +519,13 @@ const {mutation: mutationOptions, request: requestOptions} = options ?
           return  removeCompanyFromWatchlist(id,companyId,requestOptions)
         }
 
-        
+
 
 
   return  { mutationFn, ...mutationOptions }}
 
     export type RemoveCompanyFromWatchlistMutationResult = NonNullable<Awaited<ReturnType<typeof removeCompanyFromWatchlist>>>
-    
+
     export type RemoveCompanyFromWatchlistMutationError = unknown
 
     export const useRemoveCompanyFromWatchlist = <TError = unknown,
@@ -541,4 +541,3 @@ const {mutation: mutationOptions, request: requestOptions} = options ?
 
       return useMutation(mutationOptions, queryClient);
     }
-    

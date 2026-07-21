@@ -42,7 +42,7 @@ export type listResumesResponse200 = {
   data: ResumePage
   status: 200
 }
-    
+
 export type listResumesResponseSuccess = (listResumesResponse200) & {
   headers: Headers;
 };
@@ -54,7 +54,7 @@ export const getListResumesUrl = (params?: ListResumesParams,) => {
   const normalizedParams = new URLSearchParams();
 
   Object.entries(params || {}).forEach(([key, value]) => {
-    
+
     if (value !== undefined) {
       normalizedParams.append(key, value === null ? 'null' : value.toString())
     }
@@ -66,13 +66,13 @@ export const getListResumesUrl = (params?: ListResumesParams,) => {
 }
 
 export const listResumes = async (params?: ListResumesParams, options?: RequestInit): Promise<listResumesResponse> => {
-  
+
   return apiFetch<listResumesResponse>(getListResumesUrl(params),
-  {      
+  {
     ...options,
     method: 'GET'
-    
-    
+
+
   }
 );}
 
@@ -86,7 +86,7 @@ export const getListResumesQueryKey = (params?: ListResumesParams,) => {
     ] as const;
     }
 
-    
+
 export const getListResumesQueryOptions = <TData = Awaited<ReturnType<typeof listResumes>>, TError = unknown>(params?: ListResumesParams, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof listResumes>>, TError, TData>>, request?: SecondParameter<typeof apiFetch>}
 ) => {
 
@@ -94,13 +94,13 @@ const {query: queryOptions, request: requestOptions} = options ?? {};
 
   const queryKey =  queryOptions?.queryKey ?? getListResumesQueryKey(params);
 
-  
+
 
     const queryFn: QueryFunction<Awaited<ReturnType<typeof listResumes>>> = ({ signal }) => listResumes(params, { signal, ...requestOptions });
 
-      
 
-      
+
+
 
    return  { queryKey, queryFn, ...queryOptions} as UseQueryOptions<Awaited<ReturnType<typeof listResumes>>, TError, TData> & { queryKey: DataTag<QueryKey, TData> }
 }
@@ -136,7 +136,7 @@ export function useListResumes<TData = Awaited<ReturnType<typeof listResumes>>, 
 
 export function useListResumes<TData = Awaited<ReturnType<typeof listResumes>>, TError = unknown>(
  params?: ListResumesParams, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof listResumes>>, TError, TData>>, request?: SecondParameter<typeof apiFetch>}
- , queryClient?: QueryClient 
+ , queryClient?: QueryClient
  ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData> } {
 
   const queryOptions = getListResumesQueryOptions(params,options)
@@ -155,7 +155,7 @@ export type generateResumeResponse201 = {
   data: ResumeVersion
   status: 201
 }
-    
+
 export type generateResumeResponseSuccess = (generateResumeResponse201) & {
   headers: Headers;
 };
@@ -166,15 +166,15 @@ export type generateResumeResponse = (generateResumeResponseSuccess)
 export const getGenerateResumeUrl = () => {
 
 
-  
+
 
   return `/api/resumes/generate`
 }
 
 export const generateResume = async (generateResumeRequest: GenerateResumeRequest, options?: RequestInit): Promise<generateResumeResponse> => {
-  
+
   return apiFetch<generateResumeResponse>(getGenerateResumeUrl(),
-  {      
+  {
     ...options,
     method: 'POST',
     headers: { 'Content-Type': 'application/json', ...options?.headers },
@@ -197,7 +197,7 @@ const {mutation: mutationOptions, request: requestOptions} = options ?
       : {...options, mutation: {...options.mutation, mutationKey}}
       : {mutation: { mutationKey, }, request: undefined};
 
-      
+
 
 
       const mutationFn: MutationFunction<Awaited<ReturnType<typeof generateResume>>, {data: GenerateResumeRequest}> = (props) => {
@@ -206,7 +206,7 @@ const {mutation: mutationOptions, request: requestOptions} = options ?
           return  generateResume(data,requestOptions)
         }
 
-        
+
 
 
   return  { mutationFn, ...mutationOptions }}
@@ -232,7 +232,7 @@ const {mutation: mutationOptions, request: requestOptions} = options ?
   data: ResumeVersion[]
   status: 200
 }
-    
+
 export type getJobResumeHistoryResponseSuccess = (getJobResumeHistoryResponse200) & {
   headers: Headers;
 };
@@ -243,19 +243,19 @@ export type getJobResumeHistoryResponse = (getJobResumeHistoryResponseSuccess)
 export const getGetJobResumeHistoryUrl = (jobId: string,) => {
 
 
-  
+
 
   return `/api/resumes/job/${jobId}`
 }
 
 export const getJobResumeHistory = async (jobId: string, options?: RequestInit): Promise<getJobResumeHistoryResponse> => {
-  
+
   return apiFetch<getJobResumeHistoryResponse>(getGetJobResumeHistoryUrl(jobId),
-  {      
+  {
     ...options,
     method: 'GET'
-    
-    
+
+
   }
 );}
 
@@ -269,7 +269,7 @@ export const getGetJobResumeHistoryQueryKey = (jobId?: string,) => {
     ] as const;
     }
 
-    
+
 export const getGetJobResumeHistoryQueryOptions = <TData = Awaited<ReturnType<typeof getJobResumeHistory>>, TError = unknown>(jobId: string, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getJobResumeHistory>>, TError, TData>>, request?: SecondParameter<typeof apiFetch>}
 ) => {
 
@@ -277,13 +277,13 @@ const {query: queryOptions, request: requestOptions} = options ?? {};
 
   const queryKey =  queryOptions?.queryKey ?? getGetJobResumeHistoryQueryKey(jobId);
 
-  
+
 
     const queryFn: QueryFunction<Awaited<ReturnType<typeof getJobResumeHistory>>> = ({ signal }) => getJobResumeHistory(jobId, { signal, ...requestOptions });
 
-      
 
-      
+
+
 
    return  { queryKey, queryFn, enabled: !!(jobId), ...queryOptions} as UseQueryOptions<Awaited<ReturnType<typeof getJobResumeHistory>>, TError, TData> & { queryKey: DataTag<QueryKey, TData> }
 }
@@ -319,7 +319,7 @@ export function useGetJobResumeHistory<TData = Awaited<ReturnType<typeof getJobR
 
 export function useGetJobResumeHistory<TData = Awaited<ReturnType<typeof getJobResumeHistory>>, TError = unknown>(
  jobId: string, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getJobResumeHistory>>, TError, TData>>, request?: SecondParameter<typeof apiFetch>}
- , queryClient?: QueryClient 
+ , queryClient?: QueryClient
  ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData> } {
 
   const queryOptions = getGetJobResumeHistoryQueryOptions(jobId,options)
@@ -338,7 +338,7 @@ export type archiveResumeResponse204 = {
   data: void
   status: 204
 }
-    
+
 export type archiveResumeResponseSuccess = (archiveResumeResponse204) & {
   headers: Headers;
 };
@@ -349,19 +349,19 @@ export type archiveResumeResponse = (archiveResumeResponseSuccess)
 export const getArchiveResumeUrl = (id: string,) => {
 
 
-  
+
 
   return `/api/resumes/${id}`
 }
 
 export const archiveResume = async (id: string, options?: RequestInit): Promise<archiveResumeResponse> => {
-  
+
   return apiFetch<archiveResumeResponse>(getArchiveResumeUrl(id),
-  {      
+  {
     ...options,
     method: 'DELETE'
-    
-    
+
+
   }
 );}
 
@@ -379,7 +379,7 @@ const {mutation: mutationOptions, request: requestOptions} = options ?
       : {...options, mutation: {...options.mutation, mutationKey}}
       : {mutation: { mutationKey, }, request: undefined};
 
-      
+
 
 
       const mutationFn: MutationFunction<Awaited<ReturnType<typeof archiveResume>>, {id: string}> = (props) => {
@@ -388,13 +388,13 @@ const {mutation: mutationOptions, request: requestOptions} = options ?
           return  archiveResume(id,requestOptions)
         }
 
-        
+
 
 
   return  { mutationFn, ...mutationOptions }}
 
     export type ArchiveResumeMutationResult = NonNullable<Awaited<ReturnType<typeof archiveResume>>>
-    
+
     export type ArchiveResumeMutationError = unknown
 
     export const useArchiveResume = <TError = unknown,
@@ -414,7 +414,7 @@ const {mutation: mutationOptions, request: requestOptions} = options ?
   data: ResumeVersion
   status: 200
 }
-    
+
 export type restoreResumeResponseSuccess = (restoreResumeResponse200) & {
   headers: Headers;
 };
@@ -425,19 +425,19 @@ export type restoreResumeResponse = (restoreResumeResponseSuccess)
 export const getRestoreResumeUrl = (id: string,) => {
 
 
-  
+
 
   return `/api/resumes/${id}/restore`
 }
 
 export const restoreResume = async (id: string, options?: RequestInit): Promise<restoreResumeResponse> => {
-  
+
   return apiFetch<restoreResumeResponse>(getRestoreResumeUrl(id),
-  {      
+  {
     ...options,
     method: 'POST'
-    
-    
+
+
   }
 );}
 
@@ -455,7 +455,7 @@ const {mutation: mutationOptions, request: requestOptions} = options ?
       : {...options, mutation: {...options.mutation, mutationKey}}
       : {mutation: { mutationKey, }, request: undefined};
 
-      
+
 
 
       const mutationFn: MutationFunction<Awaited<ReturnType<typeof restoreResume>>, {id: string}> = (props) => {
@@ -464,13 +464,13 @@ const {mutation: mutationOptions, request: requestOptions} = options ?
           return  restoreResume(id,requestOptions)
         }
 
-        
+
 
 
   return  { mutationFn, ...mutationOptions }}
 
     export type RestoreResumeMutationResult = NonNullable<Awaited<ReturnType<typeof restoreResume>>>
-    
+
     export type RestoreResumeMutationError = unknown
 
     export const useRestoreResume = <TError = unknown,
@@ -490,7 +490,7 @@ const {mutation: mutationOptions, request: requestOptions} = options ?
   data: ResumeHealth
   status: 200
 }
-    
+
 export type getResumeHealthResponseSuccess = (getResumeHealthResponse200) & {
   headers: Headers;
 };
@@ -501,19 +501,19 @@ export type getResumeHealthResponse = (getResumeHealthResponseSuccess)
 export const getGetResumeHealthUrl = () => {
 
 
-  
+
 
   return `/api/resumes/health`
 }
 
 export const getResumeHealth = async ( options?: RequestInit): Promise<getResumeHealthResponse> => {
-  
+
   return apiFetch<getResumeHealthResponse>(getGetResumeHealthUrl(),
-  {      
+  {
     ...options,
     method: 'GET'
-    
-    
+
+
   }
 );}
 
@@ -527,7 +527,7 @@ export const getGetResumeHealthQueryKey = () => {
     ] as const;
     }
 
-    
+
 export const getGetResumeHealthQueryOptions = <TData = Awaited<ReturnType<typeof getResumeHealth>>, TError = unknown>( options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getResumeHealth>>, TError, TData>>, request?: SecondParameter<typeof apiFetch>}
 ) => {
 
@@ -535,13 +535,13 @@ const {query: queryOptions, request: requestOptions} = options ?? {};
 
   const queryKey =  queryOptions?.queryKey ?? getGetResumeHealthQueryKey();
 
-  
+
 
     const queryFn: QueryFunction<Awaited<ReturnType<typeof getResumeHealth>>> = ({ signal }) => getResumeHealth({ signal, ...requestOptions });
 
-      
 
-      
+
+
 
    return  { queryKey, queryFn, ...queryOptions} as UseQueryOptions<Awaited<ReturnType<typeof getResumeHealth>>, TError, TData> & { queryKey: DataTag<QueryKey, TData> }
 }
@@ -577,7 +577,7 @@ export function useGetResumeHealth<TData = Awaited<ReturnType<typeof getResumeHe
 
 export function useGetResumeHealth<TData = Awaited<ReturnType<typeof getResumeHealth>>, TError = unknown>(
   options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getResumeHealth>>, TError, TData>>, request?: SecondParameter<typeof apiFetch>}
- , queryClient?: QueryClient 
+ , queryClient?: QueryClient
  ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData> } {
 
   const queryOptions = getGetResumeHealthQueryOptions(options)

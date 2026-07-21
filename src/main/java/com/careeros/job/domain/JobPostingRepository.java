@@ -20,6 +20,8 @@ public interface JobPostingRepository {
 
     boolean existsByHash(String hash);
 
+    boolean existsByApplyUrl(String applyUrl);
+
     Page<JobPosting> findAll(JobPostingFilter filter, Pageable pageable);
 
     void deleteById(UUID id);

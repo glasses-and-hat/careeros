@@ -5,6 +5,7 @@
  * OpenAPI spec version: 0.4.0
  */
 
+export * from './aggregatorRunResult';
 export * from './analytics';
 export * from './analyticsApplicationsByStatus';
 export * from './analyticsJobsAppliedPerCompany';
@@ -14,6 +15,7 @@ export * from './applicationPage';
 export * from './applicationPageAllOf';
 export * from './applicationRequest';
 export * from './applicationStatus';
+export * from './builtinChicagoStatus';
 export * from './company';
 export * from './companyIngestionResult';
 export * from './companyPage';
@@ -32,6 +34,7 @@ export * from './jobPageAllOf';
 export * from './jobPosting';
 export * from './jobPostingPage';
 export * from './jobPostingPageAllOf';
+export * from './jobSourceType';
 export * from './jobSummary';
 export * from './listApplicationsParams';
 export * from './listCompaniesParams';

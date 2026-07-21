@@ -24,6 +24,8 @@ public final class JobPostingMapper {
                 jobPosting.getDescription(),
                 jobPosting.getPostedDate(),
                 jobPosting.getApplyUrl(),
+                jobPosting.getSourceType(),
+                jobPosting.getSourceUrl(),
                 jobPosting.getHash(),
                 jobPosting.getCreatedAt(),
                 jobPosting.getUpdatedAt());

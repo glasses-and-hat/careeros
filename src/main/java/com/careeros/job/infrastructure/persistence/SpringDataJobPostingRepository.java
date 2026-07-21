@@ -26,4 +26,6 @@ interface SpringDataJobPostingRepository extends JpaRepository<JobPosting, UUID>
     Optional<JobPosting> findByHash(String hash);
 
     boolean existsByHash(String hash);
+
+    boolean existsByApplyUrl(String applyUrl);
 }

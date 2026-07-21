@@ -1,18 +1,15 @@
-package com.careeros.job.web;
+package com.careeros.aggregator.application;
 
 import com.careeros.job.domain.EmploymentType;
-import com.careeros.job.domain.JobSourceType;
 
 import java.math.BigDecimal;
-import java.time.Instant;
 import java.time.LocalDate;
-import java.util.UUID;
 
-public record JobPostingResponse(
-        UUID id,
+/** Provider-neutral job discovered through a secondary job-market source. */
+public record AggregatedJob(
         String externalId,
-        UUID companyId,
         String companyName,
+        String companyUrl,
         String title,
         String location,
         EmploymentType employmentType,
@@ -23,10 +20,6 @@ public record JobPostingResponse(
         String description,
         LocalDate postedDate,
         String applyUrl,
-        JobSourceType sourceType,
-        String sourceUrl,
-        String hash,
-        Instant createdAt,
-        Instant updatedAt
+        String sourceUrl
 ) {
 }

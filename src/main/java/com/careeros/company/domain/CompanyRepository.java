@@ -21,6 +21,8 @@ public interface CompanyRepository {
 
     boolean existsByNameIgnoreCase(String name);
 
+    Optional<Company> findByNameIgnoreCase(String name);
+
     Page<Company> findAll(CompanyFilter filter, Pageable pageable);
 
     List<Company> findAllEnabled();

@@ -5,6 +5,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.UUID;
 
 /**
@@ -15,6 +16,8 @@ import java.util.UUID;
 interface SpringDataCompanyRepository extends JpaRepository<Company, UUID>, JpaSpecificationExecutor<Company> {
 
     boolean existsByNameIgnoreCase(String name);
+
+    Optional<Company> findByNameIgnoreCase(String name);
 
     List<Company> findAllByEnabledTrue();
 }

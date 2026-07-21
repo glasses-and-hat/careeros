@@ -26,6 +26,7 @@ every page, API group, workflow, configuration option, and known limitation.
   company priority, and recency
 - US-only and Chicagoland/remote preference filtering
 - Company catalog, provider configuration, watchlists, and bulk ingestion
+- Feature-flagged, manual Built In Chicago discovery for local use
 - Searchable job discovery with score breakdowns and application state
 - Application Kanban board, reminders, dashboard, saved searches, and analytics
 - Locally generated DOCX resume versions using Ollama and python-docx
@@ -66,6 +67,19 @@ TanStack Query owning server state and Zustand limited to persisted UI state.
 See [Architecture](docs/architecture.md) for module and sequence diagrams and
 [ADR-0005](docs/adr/0005-provider-based-ingestion-architecture.md) for the
 provider-based ingestion decision.
+
+## Local Built In Chicago discovery
+
+The local Docker setup exposes a manual **Sync Built In** action on the
+Companies page. It imports a small, paced set of senior engineering listings,
+preserves source attribution, prefers direct employer application links, and
+never runs from the scheduler. The adapter is unavailable outside the
+`local`/`docker` profiles and the global feature default is off. Set
+`BUILTIN_CHICAGO_ENABLED=false` to hide and disable it in Docker Compose.
+
+See the [local discovery guide](docs/builtin-chicago-local-discovery.md) and
+[ADR-0006](docs/adr/0006-local-secondary-job-aggregators.md) for its operating
+boundaries and design rationale.
 
 ## Quick start
 

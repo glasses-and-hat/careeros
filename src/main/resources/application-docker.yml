@@ -5,3 +5,8 @@ spring:
 logging:
   level:
     com.careeros: INFO
+
+careeros:
+  aggregators:
+    builtin-chicago:
+      enabled: ${BUILTIN_CHICAGO_ENABLED:true}

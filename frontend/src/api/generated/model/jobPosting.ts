@@ -4,6 +4,7 @@
  * CareerOS API
  * OpenAPI spec version: 0.4.0
  */
+import type { JobSourceType } from './jobSourceType';
 
 export interface JobPosting {
   id: string;
@@ -20,5 +21,7 @@ export interface JobPosting {
   description?: string;
   postedDate?: string;
   applyUrl: string;
+  sourceType?: JobSourceType;
+  sourceUrl?: string;
   createdAt?: string;
 }

@@ -41,6 +41,11 @@ class CompanyRepositoryAdapter implements CompanyRepository {
     }
 
     @Override
+    public Optional<Company> findByNameIgnoreCase(String name) {
+        return jpaRepository.findByNameIgnoreCase(name);
+    }
+
+    @Override
     public Page<Company> findAll(CompanyFilter filter, Pageable pageable) {
         return jpaRepository.findAll(CompanySpecifications.fromFilter(filter), pageable);
     }

@@ -104,7 +104,13 @@ public class JobPostingService {
         return JobPosting.create(command.externalId(), company, command.title(), command.location(),
                 command.employmentType(), command.remote(),
                 new SalaryRange(command.salaryMin(), command.salaryMax(), command.salaryCurrency()),
-                command.description(), command.postedDate(), command.applyUrl());
+                command.description(), command.postedDate(), command.applyUrl(),
+                command.sourceType(), command.sourceUrl());
+    }
+
+    @Transactional(readOnly = true)
+    public boolean existsByApplyUrl(String applyUrl) {
+        return applyUrl != null && !applyUrl.isBlank() && jobPostingRepository.existsByApplyUrl(applyUrl);
     }
 
     private boolean sameDetails(JobPosting current, JobPostingCommand command) {

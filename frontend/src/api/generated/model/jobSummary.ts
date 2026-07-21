@@ -4,6 +4,7 @@
  * CareerOS API
  * OpenAPI spec version: 0.4.0
  */
+import type { JobSourceType } from './jobSourceType';
 import type { ApplicationStatus } from './applicationStatus';
 
 export interface JobSummary {
@@ -14,6 +15,8 @@ export interface JobSummary {
   remote: boolean;
   postedDate?: string;
   applyUrl: string;
+  sourceType?: JobSourceType;
+  sourceUrl?: string;
   overallScore: number;
   roleScore?: number;
   technologyScore?: number;

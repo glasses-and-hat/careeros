@@ -75,13 +75,21 @@ public class JobPosting extends AuditableEntity {
     @Column(name = "hash", nullable = false, unique = true, length = 64)
     private String hash;
 
+    @Enumerated(EnumType.STRING)
+    @Column(name = "source_type", nullable = false, length = 32)
+    private JobSourceType sourceType;
+
+    @Column(name = "source_url", columnDefinition = "TEXT")
+    private String sourceUrl;
+
     protected JobPosting() {
         // required by JPA
     }
 
     private JobPosting(String externalId, Company company, String title, String location,
                         EmploymentType employmentType, boolean remote, SalaryRange salary,
-                        String description, LocalDate postedDate, String applyUrl) {
+                        String description, LocalDate postedDate, String applyUrl,
+                        JobSourceType sourceType, String sourceUrl) {
         this.externalId = requireNonBlank(externalId, "externalId");
         this.company = Objects.requireNonNull(company, "company must not be null");
         this.title = requireNonBlank(title, "title");
@@ -92,6 +100,8 @@ public class JobPosting extends AuditableEntity {
         this.description = description;
         this.postedDate = postedDate;
         this.applyUrl = requireNonBlank(applyUrl, "applyUrl");
+        this.sourceType = sourceType == null ? JobSourceType.DIRECT_PROVIDER : sourceType;
+        this.sourceUrl = sourceUrl;
         this.hash = computeHash(company.getId(), this.externalId);
     }
 
@@ -99,7 +109,15 @@ public class JobPosting extends AuditableEntity {
                                      EmploymentType employmentType, boolean remote, SalaryRange salary,
                                      String description, LocalDate postedDate, String applyUrl) {
         return new JobPosting(externalId, company, title, location, employmentType, remote, salary,
-                description, postedDate, applyUrl);
+                description, postedDate, applyUrl, JobSourceType.DIRECT_PROVIDER, null);
+    }
+
+    public static JobPosting create(String externalId, Company company, String title, String location,
+                                     EmploymentType employmentType, boolean remote, SalaryRange salary,
+                                     String description, LocalDate postedDate, String applyUrl,
+                                     JobSourceType sourceType, String sourceUrl) {
+        return new JobPosting(externalId, company, title, location, employmentType, remote, salary,
+                description, postedDate, applyUrl, sourceType, sourceUrl);
     }
 
     public void updateDetails(String title, String location, EmploymentType employmentType, boolean remote,
@@ -187,6 +205,14 @@ public class JobPosting extends AuditableEntity {
 
     public String getHash() {
         return hash;
+    }
+
+    public JobSourceType getSourceType() {
+        return sourceType == null ? JobSourceType.DIRECT_PROVIDER : sourceType;
+    }
+
+    public String getSourceUrl() {
+        return sourceUrl;
     }
 
     @Override

@@ -41,6 +41,7 @@ services:
       MASTER_RESUME_PATH: ${MASTER_RESUME_PATH:-/data/master-resume.docx}
       RESUME_OUTPUT_DIRECTORY: ${RESUME_OUTPUT_DIRECTORY:-/data/resumes}
       RESUME_FILE_BASENAME: ${RESUME_FILE_BASENAME:-Rahul_Yellapragada}
+      BUILTIN_CHICAGO_ENABLED: ${BUILTIN_CHICAGO_ENABLED:-true}
     volumes:
       - ./data:/data
     ports:

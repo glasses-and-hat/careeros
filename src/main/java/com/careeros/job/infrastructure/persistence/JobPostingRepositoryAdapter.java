@@ -40,6 +40,11 @@ class JobPostingRepositoryAdapter implements JobPostingRepository {
     }
 
     @Override
+    public boolean existsByApplyUrl(String applyUrl) {
+        return jpaRepository.existsByApplyUrl(applyUrl);
+    }
+
+    @Override
     public Page<JobPosting> findAll(JobPostingFilter filter, Pageable pageable) {
         return jpaRepository.findAll(JobPostingSpecifications.fromFilter(filter), pageable);
     }

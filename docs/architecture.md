@@ -110,6 +110,35 @@ A successful provider—including a valid feed with zero current jobs—stops th
 chain. Exceptions advance to the next fallback. Every actual attempt is stored
 independently for health aggregation.
 
+### Local secondary discovery sources
+
+Cross-company aggregators are separate from the company provider registry.
+Their outbound port discovers provider-neutral postings, while an application
+service resolves employers and persists jobs through existing domain ports.
+The Built In Chicago adapter is feature-flagged, manual-only, bounded, and
+available exclusively in local development profiles.
+
+```mermaid
+sequenceDiagram
+    actor User
+    participant UI as Companies page
+    participant API as Local Aggregator API
+    participant Source as Built In Chicago adapter
+    participant Service as AggregatorIngestionService
+    participant Companies as CompanyRepository port
+    participant Jobs as JobPostingService
+    User->>UI: Sync Built In
+    UI->>API: POST /api/v1/aggregators/builtin-chicago/runs
+    API->>Service: run()
+    Service->>Source: discover bounded listings
+    Source-->>Service: normalized jobs + direct apply URLs
+    loop each unique apply URL
+      Service->>Companies: resolve employer
+      Service->>Jobs: synchronize attributed posting
+    end
+    Service-->>UI: discovered/created/skipped/failure counts
+```
+
 Provider lifecycle:
 
 1. Implement `JobProvider` with a unique `ProviderType`.

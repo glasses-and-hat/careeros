@@ -10,10 +10,12 @@ import type { ApplicationStatus } from './applicationStatus';
 export interface JobSummary {
   id: string;
   title: string;
+  companyId?: string;
   company: string;
   location?: string;
   remote: boolean;
   postedDate?: string;
+  discoveredAt?: string;
   applyUrl: string;
   sourceType?: JobSourceType;
   sourceUrl?: string;

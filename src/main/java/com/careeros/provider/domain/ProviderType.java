@@ -2,5 +2,6 @@ package com.careeros.provider.domain;
 
 public enum ProviderType {
     GREENHOUSE, LEVER, ASHBY, WORKDAY, SMARTRECRUITERS,
+    MICROSOFT_CAREERS,
     GENERIC_HTML, GENERIC_RSS, GENERIC_JSON, CUSTOM_PROVIDER
 }

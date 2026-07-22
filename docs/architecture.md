@@ -71,10 +71,11 @@ flowchart LR
     E --> C[Company Provider Configuration]
     E --> R[JobProviderRegistry]
     R --> ATS[Standard ATS Providers]
+    R --> MS[Microsoft Careers]
     R --> HTML[Generic HTML]
     R --> RSS[Generic RSS / Atom]
     R --> JSON[Generic JSON]
-    R -.future.-> CUSTOM[Company-specific Providers]
+    R -.future.-> CUSTOM[Additional company-specific providers]
     E --> J[JobPostingService]
     E --> H[Sync History]
     E --> M[Micrometer]
@@ -146,6 +147,13 @@ Provider lifecycle:
 3. Document and validate its JSON configuration.
 4. The registry makes it available without scheduler changes.
 5. Every synchronization emits history and Micrometer metrics.
+
+Microsoft is the first dedicated company provider. `MICROSOFT_CAREERS` reads
+the public Microsoft PCSX search endpoint with configurable `query`,
+`location`, and `maxResults` values. The adapter validates the host, bounds
+pagination, retries transient request failures, and maps stable internal job
+IDs to canonical Microsoft application links. It is registered through the
+same provider port and requires no scheduler-specific branching.
 
 ## Milestone 6 local resume tailoring
 

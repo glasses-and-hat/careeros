@@ -10,6 +10,7 @@ export type GetJobTimelinePeriod = typeof GetJobTimelinePeriod[keyof typeof GetJ
 
 // eslint-disable-next-line @typescript-eslint/no-redeclare
 export const GetJobTimelinePeriod = {
+  ALL: 'ALL',
   TODAY: 'TODAY',
   YESTERDAY: 'YESTERDAY',
   LAST_7_DAYS: 'LAST_7_DAYS',

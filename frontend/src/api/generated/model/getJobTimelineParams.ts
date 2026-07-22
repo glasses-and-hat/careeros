@@ -8,8 +8,11 @@ import type { GetJobTimelinePeriod } from './getJobTimelinePeriod';
 
 export type GetJobTimelineParams = {
 period?: GetJobTimelinePeriod;
+companyId?: string;
 page?: number;
 size?: number;
 minimumScore?: number;
 remote?: boolean;
+location?: string;
+ats?: string;
 };

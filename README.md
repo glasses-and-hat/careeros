@@ -71,8 +71,8 @@ provider-based ingestion decision.
 ## Local Built In Chicago discovery
 
 The local Docker setup exposes a manual **Sync Built In** action on the
-Companies page. It imports a small, paced set of senior engineering listings,
-preserves source attribution, prefers direct employer application links, and
+Companies page. It imports a bounded set of senior engineering cards from one
+server-rendered results page, preserves source attribution, and
 never runs from the scheduler. The adapter is unavailable outside the
 `local`/`docker` profiles and the global feature default is off. Set
 `BUILTIN_CHICAGO_ENABLED=false` to hide and disable it in Docker Compose.

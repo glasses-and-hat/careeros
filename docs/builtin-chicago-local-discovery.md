@@ -38,19 +38,19 @@ when the flag is off.
 ## Safety boundaries
 
 - Manual invocation only; the scheduler never calls this source.
-- At most 25 detail pages per run by default, with a 250 ms delay between
-  requests. The hard configuration maximum is 50.
+- One server-rendered search-results page is requested per run. At most 25 job
+  cards are imported by default; the hard configuration maximum is 50.
 - A descriptive CareerOS personal-use user agent is sent.
 - The adapter reads public job listing metadata and retains source attribution.
-- It prefers the employer's direct application URL and removes tracking query
-  parameters before persistence.
+- The Built In listing URL is retained as the application and attribution URL;
+  CareerOS does not request Cloudflare-protected job-detail pages.
 - Existing jobs are skipped by canonical application URL to reduce duplicates.
 - Newly discovered employers are created disabled, so they do not silently
   enter normal provider scheduling.
 
 The defaults can be adjusted only in the local profile under
-`careeros.aggregators.builtin-chicago`, including `search-path`, `max-jobs`,
-and `request-delay`. Site terms and markup can change; review them before use
+`careeros.aggregators.builtin-chicago`, including `search-path` and `max-jobs`.
+Site terms and markup can change; review them before use
 and disable the adapter if the permitted use changes.
 
 ## Data model
@@ -59,4 +59,3 @@ Imported postings use `sourceType=AGGREGATOR` and retain the original Built In
 listing as `sourceUrl`. Normal ATS/provider jobs use
 `sourceType=DIRECT_PROVIDER`. The Jobs page exposes this distinction and the
 detail drawer links back to the attributed listing.
-

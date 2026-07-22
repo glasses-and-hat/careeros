@@ -5,4 +5,3 @@ careeros:
       base-url: https://www.builtinchicago.org
       search-path: /jobs/dev-engineering/senior
       max-jobs: 25
-      request-delay: 250ms

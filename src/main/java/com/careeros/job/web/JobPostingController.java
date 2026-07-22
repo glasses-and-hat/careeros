@@ -4,6 +4,7 @@ import com.careeros.common.web.PageResponse;
 import com.careeros.job.application.JobPostingService;
 import com.careeros.job.domain.EmploymentType;
 import com.careeros.job.domain.JobPosting;
+import com.careeros.job.domain.JobSourceType;
 import com.careeros.job.domain.JobPostingFilter;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -63,8 +64,9 @@ public class JobPostingController {
             @RequestParam(required = false) EmploymentType employmentType,
             @RequestParam(required = false) Boolean remote,
             @RequestParam(required = false) LocalDate postedAfter,
+            @RequestParam(required = false) JobSourceType sourceType,
             @PageableDefault(size = 20, sort = "postedDate") Pageable pageable) {
-        JobPostingFilter filter = new JobPostingFilter(companyId, title, location, employmentType, remote, postedAfter);
+        JobPostingFilter filter = new JobPostingFilter(companyId, title, location, employmentType, remote, postedAfter, sourceType);
         return PageResponse.from(jobPostingService.list(filter, pageable), JobPostingMapper::toResponse);
     }
 

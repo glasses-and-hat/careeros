@@ -13,10 +13,11 @@ public record JobPostingFilter(
         String location,
         EmploymentType employmentType,
         Boolean remote,
-        LocalDate postedAfter
+        LocalDate postedAfter,
+        JobSourceType sourceType
 ) {
 
     public static JobPostingFilter empty() {
-        return new JobPostingFilter(null, null, null, null, null, null);
+        return new JobPostingFilter(null, null, null, null, null, null, null);
     }
 }

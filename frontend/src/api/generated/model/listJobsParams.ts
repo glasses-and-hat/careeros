@@ -4,6 +4,7 @@
  * CareerOS API
  * OpenAPI spec version: 0.4.0
  */
+import type { JobSourceType } from './jobSourceType';
 
 export type ListJobsParams = {
 page?: number;
@@ -11,4 +12,5 @@ size?: number;
 title?: string;
 location?: string;
 remote?: boolean;
+sourceType?: JobSourceType;
 };

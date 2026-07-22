@@ -3,6 +3,7 @@ package com.careeros.job.infrastructure.persistence;
 import com.careeros.job.domain.EmploymentType;
 import com.careeros.job.domain.JobPosting;
 import com.careeros.job.domain.JobPostingFilter;
+import com.careeros.job.domain.JobSourceType;
 import jakarta.persistence.criteria.JoinType;
 import org.springframework.data.jpa.domain.Specification;
 
@@ -25,7 +26,8 @@ final class JobPostingSpecifications {
                 .and(locationContains(filter.location()))
                 .and(hasEmploymentType(filter.employmentType()))
                 .and(isRemote(filter.remote()))
-                .and(postedAfter(filter.postedAfter()));
+                .and(postedAfter(filter.postedAfter()))
+                .and(hasSourceType(filter.sourceType()));
     }
 
     /**
@@ -83,5 +85,12 @@ final class JobPostingSpecifications {
             return null;
         }
         return (root, query, cb) -> cb.greaterThanOrEqualTo(root.get("postedDate"), postedAfter);
+    }
+
+    private static Specification<JobPosting> hasSourceType(JobSourceType sourceType) {
+        if (sourceType == null) {
+            return null;
+        }
+        return (root, query, cb) -> cb.equal(root.get("sourceType"), sourceType);
     }
 }

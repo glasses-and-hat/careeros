@@ -12,13 +12,13 @@ paths:
     get:
       operationId: getJobTimeline
       tags: [Discovery]
-      parameters: [{name: period,in: query,schema: {type: string,enum: [ALL,TODAY,YESTERDAY,LAST_7_DAYS,LAST_30_DAYS]}},{name: companyId,in: query,schema: {type: string,format: uuid}},{name: page,in: query,schema: {type: integer}},{name: size,in: query,schema: {type: integer}},{name: minimumScore,in: query,schema: {type: integer}},{name: remote,in: query,schema: {type: boolean}},{name: location,in: query,schema: {type: string}},{name: ats,in: query,schema: {type: string}}]
+      parameters: [{name: period,in: query,schema: {type: string,enum: [ALL,TODAY,YESTERDAY,LAST_7_DAYS,LAST_30_DAYS]}},{name: companyId,in: query,schema: {type: string,format: uuid}},{name: page,in: query,schema: {type: integer}},{name: size,in: query,schema: {type: integer}},{name: minimumScore,in: query,schema: {type: integer}},{name: remote,in: query,schema: {type: boolean}},{name: location,in: query,schema: {type: string}},{name: ats,in: query,schema: {type: string}},{name: sourceType,in: query,schema: {$ref: '#/components/schemas/JobSourceType'}}]
       responses: {'200': {description: Jobs, content: {application/json: {schema: {$ref: '#/components/schemas/JobPage'}}}}}
   /api/v1/jobs:
     get:
       operationId: listJobs
       tags: [Jobs]
-      parameters: [{name: page,in: query,schema: {type: integer}},{name: size,in: query,schema: {type: integer}},{name: title,in: query,schema: {type: string}},{name: location,in: query,schema: {type: string}},{name: remote,in: query,schema: {type: boolean}}]
+      parameters: [{name: page,in: query,schema: {type: integer}},{name: size,in: query,schema: {type: integer}},{name: title,in: query,schema: {type: string}},{name: location,in: query,schema: {type: string}},{name: remote,in: query,schema: {type: boolean}},{name: sourceType,in: query,schema: {$ref: '#/components/schemas/JobSourceType'}}]
       responses: {'200': {description: Jobs, content: {application/json: {schema: {$ref: '#/components/schemas/JobPostingPage'}}}}}
   /api/v1/jobs/{id}:
     get: {operationId: getJob,tags: [Jobs],parameters: [{name: id,in: path,required: true,schema: {type: string,format: uuid}}],responses: {'200': {description: Job details,content: {application/json: {schema: {$ref: '#/components/schemas/JobPosting'}}}}}}

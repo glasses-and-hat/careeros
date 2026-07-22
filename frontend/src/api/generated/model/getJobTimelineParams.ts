@@ -5,6 +5,7 @@
  * OpenAPI spec version: 0.4.0
  */
 import type { GetJobTimelinePeriod } from './getJobTimelinePeriod';
+import type { JobSourceType } from './jobSourceType';
 
 export type GetJobTimelineParams = {
 period?: GetJobTimelinePeriod;
@@ -15,4 +16,5 @@ minimumScore?: number;
 remote?: boolean;
 location?: string;
 ats?: string;
+sourceType?: JobSourceType;
 };

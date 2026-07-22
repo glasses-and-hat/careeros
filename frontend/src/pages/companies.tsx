@@ -9,10 +9,10 @@ import{Page}from'@/components/page';
 import{Badge,Button,EmptyState,ErrorState,Modal,Skeleton}from'@/components/ui';
 import{cn}from'@/lib/utils';
 
-const providers:ProviderType[]=['GREENHOUSE','LEVER','ASHBY','WORKDAY','SMARTRECRUITERS','GENERIC_HTML','GENERIC_RSS','GENERIC_JSON'];
+const providers:ProviderType[]=['GREENHOUSE','LEVER','ASHBY','WORKDAY','SMARTRECRUITERS','MICROSOFT_CAREERS','GENERIC_HTML','GENERIC_RSS','GENERIC_JSON'];
 const standardProviders=new Set<ProviderType>(['GREENHOUSE','LEVER','ASHBY','WORKDAY','SMARTRECRUITERS']);
-const labels:Record<ProviderType,string>={GREENHOUSE:'Greenhouse',LEVER:'Lever',ASHBY:'Ashby',WORKDAY:'Workday',SMARTRECRUITERS:'SmartRecruiters',GENERIC_HTML:'Career page (HTML)',GENERIC_RSS:'RSS / Atom feed',GENERIC_JSON:'JSON job feed',CUSTOM_PROVIDER:'Custom integration'};
-const template=(provider:ProviderType,url:string)=>provider==='GENERIC_HTML'?JSON.stringify({jobSelector:'.job',jobLinkSelector:'a',titleSelector:'.title',locationSelector:'.location',maxPages:1},null,2):provider==='GENERIC_RSS'?JSON.stringify({feedUrl:url},null,2):provider==='GENERIC_JSON'?JSON.stringify({endpoint:url,itemsField:'jobs',titleField:'title',locationField:'location',descriptionField:'description',urlField:'url',idField:'id'},null,2):'';
+const labels:Record<ProviderType,string>={GREENHOUSE:'Greenhouse',LEVER:'Lever',ASHBY:'Ashby',WORKDAY:'Workday',SMARTRECRUITERS:'SmartRecruiters',MICROSOFT_CAREERS:'Microsoft Careers',GENERIC_HTML:'Career page (HTML)',GENERIC_RSS:'RSS / Atom feed',GENERIC_JSON:'JSON job feed',CUSTOM_PROVIDER:'Custom integration'};
+const template=(provider:ProviderType,url:string)=>provider==='MICROSOFT_CAREERS'?JSON.stringify({baseUrl:'https://apply.careers.microsoft.com',domain:'microsoft.com',query:'Senior Software Engineer',location:'United States',maxResults:100},null,2):provider==='GENERIC_HTML'?JSON.stringify({jobSelector:'.job',jobLinkSelector:'a',titleSelector:'.title',locationSelector:'.location',maxPages:1},null,2):provider==='GENERIC_RSS'?JSON.stringify({feedUrl:url},null,2):provider==='GENERIC_JSON'?JSON.stringify({endpoint:url,itemsField:'jobs',titleField:'title',locationField:'location',descriptionField:'description',urlField:'url',idField:'id'},null,2):'';
 const empty:CompanyRequest={name:'',careerUrl:'',atsType:'OTHER',priority:'MEDIUM',enabled:true,providerType:'GENERIC_HTML',providerConfiguration:template('GENERIC_HTML',''),fallbackProviders:[]};
 
 export default function CompaniesPage(){

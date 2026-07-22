@@ -19,7 +19,7 @@ every page, API group, workflow, configuration option, and known limitation.
 ## What is implemented
 
 - Pluggable job providers for Greenhouse, Lever, Ashby, Workday,
-  SmartRecruiters, generic HTML, RSS/Atom, and JSON sources
+  SmartRecruiters, Microsoft Careers, generic HTML, RSS/Atom, and JSON sources
 - Primary and fallback provider chains, synchronization history, health
   aggregation, retries, and Micrometer metrics
 - Deterministic job scoring by role, technology, location, remote preference,

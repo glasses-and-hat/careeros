@@ -216,6 +216,7 @@ Supported provider types:
 - `ASHBY`
 - `WORKDAY`
 - `SMARTRECRUITERS`
+- `MICROSOFT_CAREERS`
 - `GENERIC_HTML`
 - `GENERIC_RSS`
 - `GENERIC_JSON`
@@ -228,6 +229,11 @@ first successful provider stops the chain.
 
 Greenhouse reads use bounded retries for transient network timeouts. Provider
 attempts record jobs found, added, updated, duration, success, and errors.
+
+Microsoft uses its dedicated `MICROSOFT_CAREERS` provider. Its configuration
+supports `query`, `location`, and a bounded `maxResults`; the default seed
+monitors the 100 newest United States results for "Senior Software Engineer".
+The Microsoft company is enabled automatically by the provider migration.
 
 The supplied Ashby catalog is stored in `config/ashby-boards.txt`. Import it
 idempotently with:
